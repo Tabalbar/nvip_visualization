@@ -1,24 +1,28 @@
 import React, { useState } from "react";
 import ReactFlowGraph from "./components/ReactFlowGraph";
 import ReaGraph from "./components/ReaGraph";
+import D3Network from "./components/d3Network";
 
 function App() {
-  const [tabs, setTabs] = useState(1);
+  const [tabs, setTabs] = useState(2);
 
   return (
     <>
-      hello world
       {tabs === 0 ? (
         <>
-          <button onClick={() => setTabs(1)}>next</button>
           <ReactFlowGraph />
         </>
-      ) : (
+      ) : null}
+      {tabs === 1 ? (
         <>
-          <button onClick={() => setTabs(0)}>prev</button>
           <ReaGraph />
         </>
-      )}
+      ) : null}
+      {tabs === 2 ? (
+        <>
+          <D3Network />
+        </>
+      ) : null}
     </>
   );
 }

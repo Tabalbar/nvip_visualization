@@ -67,3 +67,16 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+form {
+  display: table;
+}
+p {
+  display: table-row;
+}
+label {
+  display: table-cell;
+}
+input {
+  display: table-cell;
+}
