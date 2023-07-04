@@ -10,7 +10,7 @@ const isVulnerableLibrary = "#ffd166";
 const isNotVulnerableLibrary = "#118ab2";
 const highlightedColor = "white";
 
-const D3Network = () => {
+const D3NetworkV2 = () => {
   const [nodes, setNodes] = useState([]);
   const [links, setLinks] = useState([]);
   const svgRef = useRef(null);
@@ -19,7 +19,7 @@ const D3Network = () => {
   const [text, setText] = useState("");
   const [repelStrength, setRepelStrength] = useState(-70);
   const [clusterStrength, setClusterStrength] = useState(1);
-  let simulation = useRef();
+  const simulation = useRef();
 
   const width = window.innerWidth + 500;
   const height = window.innerHeight + 500;
@@ -28,38 +28,21 @@ const D3Network = () => {
     const tmpNodes = [];
     const tmpLinks = [];
 
-    for (let i = 0; i < sbom_data.vulnerabilities.length; i++) {
-      const vuln = sbom_data.vulnerabilities[i];
-      if (tmpNodes.find((element) => element.name === vuln["bom-ref"])) {
-        continue;
-      } else {
-        tmpNodes.push({
-          name: vuln["bom-ref"],
-          color: vulnerabilityColor,
-          info: vuln,
-          type: "vulnerability",
-        });
-        for (let j = 0; j < vuln.affects.length; j++) {
-          // console.log(vuln.affects[j].ref);
-          tmpLinks.push({
-            source: vuln["bom-ref"],
-            target: vuln.affects[j].ref,
-          });
-        }
-      }
-    }
     for (let i = 0; i < sbom_data.components.length; i++) {
       const component = sbom_data.components[i];
+      const isVulnerable = sbom_data.vulnerabilities.find((vuln) =>
+        vuln.affects.find(
+          (affect) => affect["ref"] === sbom_data.components[i]["bom-ref"]
+        )
+      );
+      // console.log(isVulnereable);
       tmpNodes.push({
         name: component["bom-ref"],
         isComponent: false,
         info: component,
         type: "library",
-        color: tmpLinks.find(
-          (element) => element.target === component["bom-ref"]
-        )
-          ? isVulnerableLibrary
-          : isNotVulnerableLibrary,
+        color: isVulnerable ? isVulnerableLibrary : isNotVulnerableLibrary,
+        isVulnerable: isVulnerable,
       });
     }
     const visitedNode = [];
@@ -70,8 +53,8 @@ const D3Network = () => {
         const source = dependency["ref"];
         const target = dependency["dependsOn"][j];
         tmpLinks.push({
-          source: source,
-          target: target,
+          source: target,
+          target: source,
         });
       }
     }
@@ -97,7 +80,7 @@ const D3Network = () => {
         "x",
         d3
           .forceX()
-          .strength((d) => (d.type === "vulnerability" ? clusterStrength : 0.1))
+          .strength((d) => (d.isVulnerable ? clusterStrength : 0.1))
           .x(width / 2)
       )
 
@@ -105,7 +88,7 @@ const D3Network = () => {
         "y",
         d3
           .forceY()
-          .strength((d) => (d.type === "vulnerability" ? clusterStrength : 0.1))
+          .strength((d) => (d.isVulnerable ? clusterStrength : 0.1))
           .y(height / 2)
       )
 
@@ -118,13 +101,13 @@ const D3Network = () => {
       .append("svg:defs")
       .append("svg:marker")
       .attr("id", "triangle")
-      .attr("refX", 6)
+      .attr("refX", 17)
       .attr("refY", 6)
       .attr("markerWidth", 30)
       .attr("markerHeight", 30)
       .attr("orient", "auto")
       .append("path")
-      .attr("d", "M 0 0 -15 6 0 12 3 6")
+      .attr("d", "M 0 0 10 6 0 12 3 6")
       .style("fill", "black");
 
     const link = linkGroup
@@ -133,9 +116,27 @@ const D3Network = () => {
       .enter()
       .append("line")
       .attr("stroke", "gray")
-      .attr("stroke-width", 1)
+      .attr("refX", 17)
+      .attr("refY", 6)
       .attr("stroke-opacity", 0.3)
+      .attr("stroke-width", 1)
       .attr("marker-end", "url(#triangle)");
+
+    // const length = 100;
+
+    // // This function will animate the path over and over again
+    // function repeat() {
+    //   // Animate the path by setting the initial offset and dasharray and then transition the offset to 0
+    //   link
+    //     .attr("stroke-dasharray", length + " " + length)
+    //     .attr("stroke-dashoffset", length)
+    //     .transition()
+    //     .ease(d3.easeLinear)
+    //     .attr("stroke-dashoffset", 0)
+    //     .duration(6000)
+    //     .on("end", () => setTimeout(repeat, 10)); // this will repeat the animation after waiting 1 second
+    // }
+    // repeat();
 
     const node = svg
       .selectAll("circle")
@@ -155,7 +156,7 @@ const D3Network = () => {
             return linksToFind.includes(l);
           })
           .style("stroke", highlightedColor)
-          .style("stroke-width", 3)
+          .style("stroke-width", 1)
           .attr("stroke-opacity", 1);
 
         d3.selectAll("circle")
@@ -352,7 +353,7 @@ const D3Network = () => {
   );
 };
 
-export default D3Network;
+export default D3NetworkV2;
 
 function ZoomableSVG({ children, width, height }) {
   const svgRef = useRef();
