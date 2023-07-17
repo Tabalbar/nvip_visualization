@@ -307,7 +307,7 @@ const D3Network = () => {
   // }
 
   return (
-    <>
+    <div style={{ overflow: "hidden" }}>
       {" "}
       <form
         onSubmit={(e) => {
@@ -335,7 +335,7 @@ const D3Network = () => {
           />{" "}
         </p> */}
       </form>
-      <ZoomableSVG width={width} height={height}>
+      <ZoomableSVG overflow="hidden" width={width} height={height}>
         <svg ref={svgRef} width={width} height={height} overflow={"hidden"}>
           {/* <g>
         <rect
@@ -348,7 +348,7 @@ const D3Network = () => {
       </g> */}
         </svg>
       </ZoomableSVG>
-    </>
+    </div>
   );
 };
 

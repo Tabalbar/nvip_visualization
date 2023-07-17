@@ -5,6 +5,7 @@ import sbom_data from "../assets/sbom_dep2.json";
 import SideMenu from "./SideMenu";
 
 import useContextMenu from "../hooks/useContextMenu";
+
 import "../App.css";
 
 import * as d3 from "d3";
@@ -56,7 +57,6 @@ const D3NetworkV2 = () => {
 
   const { clicked, setClicked, points, setPoints } = useContextMenu();
   const numberOfLayers = useRef(1);
-  const [reactNumLayers, setReactNumLayers] = useState(1);
 
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -87,6 +87,7 @@ const D3NetworkV2 = () => {
           ? isVulnerableByDependencyColor
           : isNotVulnerableLibrary,
         isVulnerableByDependency: isVulnerableByDependency,
+        isRootNode: false,
       });
     }
     const visitedNode = [];
@@ -126,23 +127,22 @@ const D3NetworkV2 = () => {
       },
       false
     );
-    // return () => {
-    //   document.removeEventListener(
-    //     "keypress",
-    //     (event) => {
-    //       const name = event.key;
+    return () => {
+      document.removeEventListener(
+        "keypress",
+        (event) => {
+          const name = event.key;
 
-    //       if (name === "-") {
-    //         decreaseNumberOfLayers();
-    //       }
-    //       if (name === "=") {
-    //         console.log(numberOfLayers.current);
-    //         // increaseNumberOfLayers();
-    //       }
-    //     },
-    //     false
-    //   );
-    // };
+          if (name === "-") {
+            decreaseNumberOfLayers();
+          }
+          if (name === "=") {
+            increaseNumberOfLayers();
+          }
+        },
+        false
+      );
+    };
   }, []);
 
   useEffect(() => {
@@ -191,15 +191,15 @@ const D3NetworkV2 = () => {
 
     const linkGroup = svg.append("g");
     const arrowMarkerId = "triangle";
-    // const arrows = svg
-    //   .append("svg:defs")
-    //   .append("svg:marker")
-    //   .attr("id", arrowMarkerId)
-    //   .attr("refX", 13)
-    //   .attr("refY", 6)
-    //   .attr("markerWidth", 10)
-    //   .attr("markerHeight", 10)
-    //   .attr("orient", "auto");
+    const arrows = svg
+      .append("svg:defs")
+      .append("svg:marker")
+      .attr("id", arrowMarkerId)
+      .attr("refX", 13)
+      .attr("refY", 6)
+      .attr("markerWidth", 10)
+      .attr("markerHeight", 10)
+      .attr("orient", "auto");
 
     // arrows
     //   .append("path")
@@ -215,8 +215,9 @@ const D3NetworkV2 = () => {
       .append("line")
       .attr("stroke", "gray")
       .attr("refX", 17)
-      .attr("refY", 6);
-    // .attr("stroke-width", 1)
+      .attr("refY", 6)
+      // .attr("stroke-width", 1)
+      .attr("marker-end", `url(#${arrowMarkerId})`);
 
     d3.selectAll("line").style("opacity", 0);
 
@@ -235,7 +236,7 @@ const D3NetworkV2 = () => {
         return 4;
       })
       .attr("fill", (d, i) => d.color)
-      .attr("stroke", "black")
+      .attr("stroke", (d, i) => "none")
       .on("mouseenter", function (event, d) {
         const linksToFind = findAssociatedLinks(d);
 
@@ -247,58 +248,34 @@ const D3NetworkV2 = () => {
           .style("stroke", highlightedColor)
           .style("stroke-width", 1)
           .style("opacity", 0.7);
-
-        //TODO: change this opacity only for nodes that are highlighted
-        // d3.selectAll("circle")
-        //   .filter((new_d) => {
-        //     for (let i = 0; i < linksToFind.length; i++) {
-        //       // if (new_d.name === linksToFind[i].source.name) {
-        //       //   return true;
-        //       // }
-        //       if (new_d.name === linksToFind[i].target.name) {
-        //         return true;
-        //       } else {
-        //         return false;
-        //       }
-        //     }
-        //   })
-        //   .attr("stroke", "white");
       })
       .on("mouseout", (e, d) => {
         const linksToFind = findAssociatedLinks(d);
 
-        // If node is has property true for nodeIsClicked, do not erase the lines
-        if (!d.nodeIsClicked) {
-          d3.selectAll("line")
-            .filter((l) => {
-              return linksToFind.includes(l);
-            })
-            .style("stroke", "gray")
-            .style("stroke-width", 1)
-            .style("opacity", 0);
-        }
+        d3.selectAll("line")
+          .filter((l) => {
+            let turnOffThisLink = true;
+            if (l.target.nodeIsClicked && l.source.nodeIsClicked) {
+              turnOffThisLink = false;
+            }
 
-        // resets the stroke of the nodes to black
-        // d3.selectAll("circle")
-        //   .filter((new_d) => {
-        //     for (let i = 0; i < linksToFind.length; i++) {
-        //       if (new_d.name === linksToFind[i].source.name) {
-        //         return true;
-        //       } else if (new_d.name === linksToFind[i].target.name) {
-        //         return true;
-        //       } else {
-        //         return false;
-        //       }
-        //     }
-        //   })
-        //   .attr("stroke", "black");
+            return turnOffThisLink;
+          })
+          .style("stroke", "gray")
+          .style("stroke-width", 1)
+          .style("opacity", 0);
       })
       .on("click", (e, d) => {
         const linksToFind = findAssociatedLinks(d);
 
         if (d.nodeIsClicked) {
           // Turn the lines for nodes off
-          d.nodeIsClicked = false;
+          for (let i = 0; i < linksToFind.length; i++) {
+            linksToFind[i].source.nodeIsClicked = false;
+            linksToFind[i].target.nodeIsClicked = false;
+            linksToFind[i].source.isRootNode = false;
+            linksToFind[i].target.isRootNode = false;
+          }
           d3.selectAll("line")
             .filter((l) => {
               return linksToFind.includes(l);
@@ -307,22 +284,19 @@ const D3NetworkV2 = () => {
             .style("stroke-width", 1)
             .style("opacity", 0);
 
-          d3.selectAll("line")
-            .filter((l) => {
-              return linksToFind.includes(l);
-            })
-            .style("stroke", highlightedColor)
-            .style("stroke-width", 1)
-            .style("opacity", 0.7);
-
           d3.selectAll("circle")
             .filter((new_d) => {
               return new_d.name === d.name;
             })
-            .attr("stroke", "black");
+            .attr("stroke", "none");
         } else {
-          // Used to leave the lines always ON
-          d.nodeIsClicked = true;
+          // Turn the lines for nodes on
+          for (let i = 0; i < linksToFind.length; i++) {
+            linksToFind[i].source.nodeIsClicked = true;
+            linksToFind[i].target.nodeIsClicked = true;
+            linksToFind[i].source.isRootNode = true;
+            linksToFind[i].target.isRootNode = true;
+          }
           d3.selectAll("line")
             .filter((l) => {
               return linksToFind.includes(l);
@@ -382,7 +356,8 @@ const D3NetworkV2 = () => {
     d3.selectAll("circle").each((d) => {
       const linksToFind = findAssociatedLinks(d);
 
-      if (d.nodeIsClicked) {
+      if (d.isRootNode) {
+        console.log(linksToFind);
         d3.selectAll("line")
           .filter((l) => {
             return linksToFind.includes(l);
@@ -405,15 +380,16 @@ const D3NetworkV2 = () => {
 
   const increaseNumberOfLayers = () => {
     numberOfLayers.current++;
-    setReactNumLayers((prev) => prev + 1);
+
     handleChangeLayers();
   };
 
   const decreaseNumberOfLayers = () => {
     numberOfLayers.current--;
-    setReactNumLayers((prev) => prev - 1);
+
     handleChangeLayers();
   };
+
   function findAssociatedLinks(selectedNode) {
     const tmpAssociatedLinks = [];
     const tmpLinks = [...linkRef.current];
@@ -522,10 +498,9 @@ const D3NetworkV2 = () => {
           x: e.pageX,
           y: e.pageY,
         });
-        console.log("Right Click", e.pageX, e.pageY);
       }}
     >
-      {/* <button onClick={handleChangeLayers}>Click</button>
+      <button onClick={handleChangeLayers}>Click</button>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -537,9 +512,7 @@ const D3NetworkV2 = () => {
           <label>Find Node:</label>
           <input value={text} onChange={(e) => setText(e.target.value)} />
         </p>
-        </form> */}
-
-      {/* <p>
+        {/* <p>
           <label>Number of Layers to Visualize:</label>
           <input
             type="number"
@@ -551,7 +524,7 @@ const D3NetworkV2 = () => {
             }}
           />
         </p> */}
-      {/* <p>
+        {/* <p>
           <label>Repel Strength:</label>
           <input
             value={repelStrength}
@@ -565,10 +538,7 @@ const D3NetworkV2 = () => {
             onChange={(e) => setClusterStrength(e.target.value)}
           />{" "}
         </p> */}
-      <p style={{ fontSize: 30, margin: "1rem" }}>
-        <label>Number of Layers to Show:</label>
-        &nbsp;{reactNumLayers}
-      </p>
+      </form>
       <ZoomableSVG width={width} height={height}>
         <svg ref={svgRef} width={width} height={height} overflow={"hidden"}>
           {/* <g>
