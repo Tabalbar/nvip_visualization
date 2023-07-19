@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import React, { useRef, useEffect, useState } from "react";
 import sbom_data from "../assets/sbom_dep2.json";
 import SideMenu from "./SideMenu";
@@ -14,9 +12,9 @@ export const isVulnerableByDependencyColor = "yellow";
 export const isNotVulnerableLibrary = "#118ab2";
 const highlightedColor = "white";
 
-const checkIfVulnerableByDependency = (node) => {
+const checkIfVulnerableByDependency = (node: any) => {
   const dependencies = sbom_data.dependencies;
-  let dependenciesToSearch = [];
+  let dependenciesToSearch: any = [];
   const nodeInQuestion = dependencies.find((c) => c.ref === node["bom-ref"]);
   dependenciesToSearch.push(nodeInQuestion?.dependsOn);
   dependenciesToSearch = dependenciesToSearch.flat();
@@ -37,21 +35,34 @@ const checkIfVulnerableByDependency = (node) => {
   // dependencies.find((c) => c.ref === node.name);
 };
 
-const D3NetworkV2 = () => {
-  const [nodes, setNodes] = useState([]);
-  const [links, setLinks] = useState([]);
+function getRedShadeHex(number: number) {
+  const normalizedNumber = Math.min(Math.max(number, 0), 10); // Clamp the number between 0 and 10
 
-  const linkRef = useRef(null);
+  // Apply an exponential function to emphasize the lighter shades
+  const exponent = 2;
+  const adjustedNumber = Math.pow(normalizedNumber / 10, exponent);
+
+  const redValue = Math.round(adjustedNumber * (255 - 20) + 20); // Map the adjusted number to the range (offset, 255)
+
+  const redHex = redValue.toString(16).padStart(2, "0"); // Convert the red value to hexadecimal
+
+  return `#${redHex}0000`; // Return the hexadecimal representation of the shade of red
+}
+const D3NetworkV2 = () => {
+  const [nodes, setNodes] = useState<any>([]);
+  const [links, setLinks] = useState<any>([]);
+
+  const linkRef = useRef<any>(null);
   const svgRef = useRef(null);
   const [zoomLevel, setZoomLevel] = useState(1);
 
-  const [text, setText] = useState("");
-  const [repelStrength, setRepelStrength] = useState(-90);
-  const simulation = useRef();
-  const arrowRef = useRef();
+  const [text] = useState("");
+  const [repelStrength] = useState(-30);
+  const simulation = useRef<any>();
 
-  const vulnerableStrength = 0.7;
-  const vulnerableByDependencyStrength = 0.3;
+  const vulnerableStrength = 0.07;
+  const vulnerableByDependencyStrength = 0.07;
+  const regularStrength = 0.05;
   const [nodeClicked, setNodeClicked] = useState(null);
 
   const { clicked, setClicked, points, setPoints } = useContextMenu();
@@ -60,29 +71,56 @@ const D3NetworkV2 = () => {
 
   const width = window.innerWidth;
   const height = window.innerHeight;
+  const k = useRef<any>(1);
 
   useEffect(() => {
     const dependencies = sbom_data.dependencies;
-    const tmpNodes = [];
-    const tmpLinks = [];
+    const tmpNodes: any = [];
+    const tmpLinks: any = [];
 
     for (let i = 0; i < sbom_data.components.length; i++) {
       const component = sbom_data.components[i];
-      const isVulnerable = sbom_data.vulnerabilities.find((vuln) =>
+      let outgoingSize = 2;
+      let ingoingSize = 4;
+
+      const isVulnerable: any = sbom_data.vulnerabilities.find((vuln) =>
         vuln.affects.find(
           (affect) => affect["ref"] === sbom_data.components[i]["bom-ref"]
         )
       );
       const isVulnerableByDependency = checkIfVulnerableByDependency(component);
+
+      for (let j = 0; j < sbom_data.dependencies.length; j++) {
+        if (sbom_data.dependencies[j]["ref"] === component["bom-ref"]) {
+          ingoingSize =
+            sbom_data.dependencies[j]["dependsOn"].length < ingoingSize
+              ? 2
+              : sbom_data.dependencies[j]["dependsOn"].length;
+        }
+
+        for (
+          let k = 0;
+          k < sbom_data.dependencies[j]["dependsOn"].length;
+          k++
+        ) {
+          if (
+            sbom_data.dependencies[j]["dependsOn"][k] === component["bom-ref"]
+          ) {
+            outgoingSize++;
+          }
+        }
+      }
       tmpNodes.push({
         name: component["bom-ref"],
         isComponent: false,
         info: component,
         type: "library",
         vulnerabilityInfo: isVulnerable ? isVulnerable : false,
+        ingoingSize: ingoingSize,
+        outgoingSize: outgoingSize,
         nodeIsClicked: false,
         color: isVulnerable
-          ? vulnerabilityColor
+          ? getRedShadeHex(isVulnerable?.ratings[0].score)
           : isVulnerableByDependency
           ? isVulnerableByDependencyColor
           : isNotVulnerableLibrary,
@@ -94,8 +132,8 @@ const D3NetworkV2 = () => {
     for (let i = 0; i < sbom_data.dependencies.length; i++) {
       const dependency = sbom_data.dependencies[i];
       for (let j = 0; j < dependency["dependsOn"].length; j++) {
-        const source = dependency["ref"];
-        const target = dependency["dependsOn"][j];
+        const target = dependency["ref"];
+        const source = dependency["dependsOn"][j];
         tmpLinks.push({
           source: source,
           target: target,
@@ -153,22 +191,34 @@ const D3NetworkV2 = () => {
       .forceSimulation(nodes)
       .force(
         "link",
-        d3.forceLink(links).id((d) => d.name)
+        d3
+          .forceLink(links)
+          .id((d: any) => d.name)
+          .distance(-50)
       )
       .force("charge", d3.forceManyBody().strength(repelStrength))
-      .force("center", d3.forceCenter(width / 2, height / 2))
+      // .force("center", d3.forceCenter(width / 2, height / 2))
       // .force("cluster", () => forceCluster())
       .force(
         "x",
         d3
           .forceX()
-          .strength((d) =>
-            d.vulnerabilityInfo
+          .strength((d: any) => {
+            // console.log(
+            //   d.vulnerabilityInfo
+            //     ? Number(
+            //         (vulnerableStrength *
+            //           d.vulnerabilityInfo.ratings[0].score) /
+            //           10
+            //       ).toFixed(2)
+            //     : "no"
+            // );
+            return d.vulnerabilityInfo
               ? vulnerableStrength
               : d.isVulnerableByDependency
               ? vulnerableByDependencyStrength
-              : 0.1
-          )
+              : regularStrength;
+          })
           .x(width / 2)
       )
 
@@ -176,18 +226,33 @@ const D3NetworkV2 = () => {
         "y",
         d3
           .forceY()
-          .strength((d) =>
+          .strength((d: any) =>
             d.vulnerabilityInfo
               ? vulnerableStrength
               : d.isVulnerableByDependency
               ? vulnerableByDependencyStrength
-              : 0.1
+              : regularStrength
           )
           .y(height / 2)
       )
-
       .force("collide", d3.forceCollide().radius(10))
       .on("tick", ticked);
+
+    // Define a custom force to modify the link distances based on node properties
+    const customForce = () => {
+      links.forEach((l: any) => {
+        const source = l.source;
+        const target = l.target;
+        // Adjust link distance based on the specific property of the source node
+        if (source.vulnerabilityInfo) {
+          link.distance = 10000; // Decrease the distance for nodes with the property
+        } else {
+          link.distance = 0; // Use the default distance for other nodes
+        }
+      });
+    };
+
+    simulation.current.force("custom", customForce);
 
     const linkGroup = svg.append("g");
     const arrowMarkerId = "triangle";
@@ -208,45 +273,61 @@ const D3NetworkV2 = () => {
     //   .style("stroke", "black")
     //   .style("stroke-width", 1);
 
-    const link = linkGroup
+    const link: any = linkGroup
       .selectAll("line")
       .data(links)
       .enter()
       .append("line")
-      .attr("stroke", "gray")
+      .attr("stroke", "#212122")
       .attr("refX", 17)
       .attr("refY", 6);
+    // .attr("opacity", 0.1);
     // .attr("stroke-width", 1)
 
-    d3.selectAll("line").style("opacity", 0);
+    // d3.selectAll("line").style("opacity", 0);
 
     link.attr("class", "flowDashedLine");
 
     const node = svg
-      .selectAll("circle")
+      .selectAll("g.node")
       .data(nodes)
       .enter()
+      .append("g")
+      .attr("class", "node");
+
+    node
       .append("circle")
-      .attr("r", (d, i) => {
+      .attr("r", (d: any, i) => {
         //If want to size the nodes according to the CVSSv2 score
-        if (d.vulnerabilityInfo) {
-          // return d.vulnerabilityInfo.ratings[0].score * 1.1;
-        }
-        return 4;
+        return d.ingoingSize;
       })
-      .attr("fill", (d, i) => d.color)
+      .attr("fill", (d: any, i) => d.color)
       .attr("stroke", "black")
       .on("mouseenter", function (event, d) {
         const linksToFind = findAssociatedLinks(d);
 
         // Show lines for the node that is highlighted
         d3.selectAll("line")
-          .filter((l) => {
+          .filter((l: any) => {
+            d3.selectAll("text")
+              .filter((d: any) => {
+                if (d.name === l.source.name && linksToFind.includes(l)) {
+                  return true;
+                } else if (
+                  d.name === l.target.name &&
+                  linksToFind.includes(l)
+                ) {
+                  return true;
+                } else {
+                  return false;
+                }
+              })
+              .attr("opacity", 1);
+
             return linksToFind.includes(l);
           })
-          .style("stroke", highlightedColor)
-          .style("stroke-width", 1)
-          .style("opacity", 0.7);
+          .style("stroke", "#F3F3F3")
+          .style("stroke-width", 1);
 
         //TODO: change this opacity only for nodes that are highlighted
         // d3.selectAll("circle")
@@ -264,18 +345,31 @@ const D3NetworkV2 = () => {
         //   })
         //   .attr("stroke", "white");
       })
-      .on("mouseout", (e, d) => {
+      .on("mouseout", (e, d: any) => {
         const linksToFind = findAssociatedLinks(d);
 
         // If node is has property true for nodeIsClicked, do not erase the lines
         if (!d.nodeIsClicked) {
           d3.selectAll("line")
-            .filter((l) => {
+            .filter((l: any) => {
+              d3.selectAll("text")
+                .filter((d: any) => {
+                  if (d.name === l.source.name && linksToFind.includes(l)) {
+                    return true;
+                  } else if (
+                    d.name === l.target.name &&
+                    linksToFind.includes(l)
+                  ) {
+                    return true;
+                  } else {
+                    return false;
+                  }
+                })
+                .attr("opacity", 0);
               return linksToFind.includes(l);
             })
-            .style("stroke", "gray")
-            .style("stroke-width", 1)
-            .style("opacity", 0);
+            .style("stroke", "#212122")
+            .style("stroke-width", 1);
         }
 
         // resets the stroke of the nodes to black
@@ -293,7 +387,7 @@ const D3NetworkV2 = () => {
         //   })
         //   .attr("stroke", "black");
       })
-      .on("click", (e, d) => {
+      .on("click", (e, d: any) => {
         const linksToFind = findAssociatedLinks(d);
 
         if (d.nodeIsClicked) {
@@ -316,7 +410,7 @@ const D3NetworkV2 = () => {
             .style("opacity", 0.7);
 
           d3.selectAll("circle")
-            .filter((new_d) => {
+            .filter((new_d: any) => {
               return new_d.name === d.name;
             })
             .attr("stroke", "black");
@@ -332,7 +426,7 @@ const D3NetworkV2 = () => {
             .style("opacity", 0.7);
 
           d3.selectAll("circle")
-            .filter((new_d) => {
+            .filter((new_d: any) => {
               return new_d.name === d.name;
             })
             .attr("stroke", "white");
@@ -343,17 +437,26 @@ const D3NetworkV2 = () => {
 
     // d3.forceSimulation(nodes).for;
     // .force("charge", d3.forceManyBody().strength(-5));
-
-    node.append("title").text((d) => d.name);
+    // Append <text> elements for labels
+    node
+      .append("text")
+      .attr("dy", "0.31em")
+      .attr("text-anchor", "middle")
+      .text((d: any) => d.info.name)
+      .attr("fill", "white")
+      .attr("user-select", "none")
+      .attr("pointer-events", "none")
+      .attr("font-size", 3 * k.current)
+      .attr("opacity", 0);
 
     function ticked() {
       link
-        .attr("x1", (d) => d.source.x)
-        .attr("y1", (d) => d.source.y)
-        .attr("x2", (d) => d.target.x)
-        .attr("y2", (d) => d.target.y);
+        .attr("x1", (d: any) => d.source.x)
+        .attr("y1", (d: any) => d.source.y)
+        .attr("x2", (d: any) => d.target.x)
+        .attr("y2", (d: any) => d.target.y);
 
-      node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
+      node.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
     }
   }, [nodes, links, width, height]);
 
@@ -364,14 +467,12 @@ const D3NetworkV2 = () => {
   const selectNode = () => {
     const node = d3
       .selectAll("circle")
-      .filter((d) => d.name === text)
+      .filter((d: any) => d.name === text)
       .attr("fill", "yellow")
       .attr("r", 10);
   };
 
   const handleChangeLayers = () => {
-    console.log(numberOfLayers.current);
-
     // First Reset all the lines. This is used when trying to decrease the number of layers.
     d3.selectAll("line")
       .style("stroke", highlightedColor)
@@ -379,7 +480,7 @@ const D3NetworkV2 = () => {
       .style("opacity", 0);
 
     // Get all nodes and update the number of layers to show
-    d3.selectAll("circle").each((d) => {
+    d3.selectAll("circle").each((d: any) => {
       const linksToFind = findAssociatedLinks(d);
 
       if (d.nodeIsClicked) {
@@ -414,10 +515,10 @@ const D3NetworkV2 = () => {
     setReactNumLayers((prev) => prev - 1);
     handleChangeLayers();
   };
-  function findAssociatedLinks(selectedNode) {
-    const tmpAssociatedLinks = [];
+  function findAssociatedLinks(selectedNode: any) {
+    const tmpAssociatedLinks: any = [];
     const tmpLinks = [...linkRef.current];
-    const findLinks = (nodes, iterationNumber) => {
+    const findLinks = (nodes: any, iterationNumber: number) => {
       const newNodesToSearch = [];
       for (let i = 0; i < nodes.length; i++) {
         for (let j = 0; j < tmpLinks.length; j++) {
@@ -511,10 +612,9 @@ const D3NetworkV2 = () => {
   //   traverseLinks(selectedNode);
   //   return associatedLinks;
   // }
-
   return (
     <div
-      style={{ backgroundColor: "#2B2C2B" }}
+      style={{ backgroundColor: "#111111" }}
       onContextMenu={(e) => {
         e.preventDefault();
         setClicked(true);
@@ -569,18 +669,13 @@ const D3NetworkV2 = () => {
         <label>Number of Layers to Show:</label>
         &nbsp;{reactNumLayers}
       </p>
-      <ZoomableSVG width={width} height={height}>
-        <svg ref={svgRef} width={width} height={height} overflow={"hidden"}>
-          {/* <g>
-        <rect
-          x={dimensions.width / 2}
-          y={dimensions.height / 2}
-          width="3em"
-          height="3em"
-          fill="gold"
-        />
-      </g> */}
-        </svg>
+      <ZoomableSVG width={width} height={height} k={k}>
+        <svg
+          ref={svgRef}
+          width={width}
+          height={height}
+          overflow={"hidden"}
+        ></svg>
       </ZoomableSVG>
       <SideMenu nodeInfo={nodeClicked} />
       {clicked && <ContextMenu top={points.y} left={points.x}></ContextMenu>}
@@ -590,15 +685,15 @@ const D3NetworkV2 = () => {
 
 export default D3NetworkV2;
 
-function ZoomableSVG({ children, width, height }) {
-  const svgRef = useRef();
-  const [k, setK] = useState(1);
+function ZoomableSVG({ children, width, height, k, setK }: any) {
+  const svgRef = useRef<any>();
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
+
   useEffect(() => {
     const zoom = d3.zoom().on("zoom", (event) => {
       const { x, y, k } = event.transform;
-      setK(k);
+      k.current = k;
       setX(x);
       setY(y);
     });
@@ -609,29 +704,6 @@ function ZoomableSVG({ children, width, height }) {
       <g transform={`translate(${x},${y})scale(${k})`}>{children}</g>
     </svg>
   );
-}
-
-function forceCluster() {
-  // console.log(d);
-  const strength = 50;
-  let nodes;
-
-  function force(alpha) {
-    const centroids = d3.rollup(nodes, centroid, (d) => {
-      // console.log(d.data.group);
-      return d.data.type;
-    });
-    const l = alpha * strength;
-    for (const d of nodes) {
-      const { x: cx, y: cy } = centroids.get(d.data.type);
-      d.vx -= (d.x - cx) * l;
-      d.vy -= (d.y - cy) * l;
-    }
-  }
-
-  force.initialize = (_) => (nodes = _);
-
-  return force;
 }
 
 const ContextMenu = (props: { top: number; left: number }) => {
