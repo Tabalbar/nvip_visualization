@@ -60,9 +60,9 @@ const D3NetworkV2 = () => {
   const [repelStrength] = useState(-30);
   const simulation = useRef<any>();
 
-  const vulnerableStrength = 0.3;
-  const vulnerableByDependencyStrength = 0.1;
-  const regularStrength = 0.01;
+  const vulnerableStrength = 0.07;
+  const vulnerableByDependencyStrength = 0.07;
+  const regularStrength = 0.05;
   const [nodeClicked, setNodeClicked] = useState(null);
 
   const { clicked, setClicked, points, setPoints } = useContextMenu();
