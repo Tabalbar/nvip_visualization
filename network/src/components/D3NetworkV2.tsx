@@ -164,23 +164,23 @@ const D3NetworkV2 = () => {
       },
       false
     );
-    // return () => {
-    //   document.removeEventListener(
-    //     "keypress",
-    //     (event) => {
-    //       const name = event.key;
+    return () => {
+      document.removeEventListener(
+        "keypress",
+        (event) => {
+          const name = event.key;
 
-    //       if (name === "-") {
-    //         decreaseNumberOfLayers();
-    //       }
-    //       if (name === "=") {
-    //         console.log(numberOfLayers.current);
-    //         // increaseNumberOfLayers();
-    //       }
-    //     },
-    //     false
-    //   );
-    // };
+          if (name === "-") {
+            decreaseNumberOfLayers();
+          }
+          if (name === "=") {
+            console.log(numberOfLayers.current);
+            // increaseNumberOfLayers();
+          }
+        },
+        false
+      );
+    };
   }, []);
 
   useEffect(() => {
@@ -194,25 +194,14 @@ const D3NetworkV2 = () => {
         d3
           .forceLink(links)
           .id((d: any) => d.name)
-          .distance(-50)
+          .distance(-100) //make the blue links longer
       )
       .force("charge", d3.forceManyBody().strength(repelStrength))
-      // .force("center", d3.forceCenter(width / 2, height / 2))
-      // .force("cluster", () => forceCluster())
       .force(
         "x",
         d3
           .forceX()
           .strength((d: any) => {
-            // console.log(
-            //   d.vulnerabilityInfo
-            //     ? Number(
-            //         (vulnerableStrength *
-            //           d.vulnerabilityInfo.ratings[0].score) /
-            //           10
-            //       ).toFixed(2)
-            //     : "no"
-            // );
             return d.vulnerabilityInfo
               ? vulnerableStrength
               : d.isVulnerableByDependency
@@ -289,13 +278,11 @@ const D3NetworkV2 = () => {
     link.attr("class", "flowDashedLine");
 
     const node = svg
-      .selectAll("g.node")
+      .append("g")
+      .attr("class", "nodes")
+      .selectAll("circle")
       .data(nodes)
       .enter()
-      .append("g")
-      .attr("class", "node");
-
-    node
       .append("circle")
       .attr("r", (d: any, i) => {
         //If want to size the nodes according to the CVSSv2 score
@@ -322,28 +309,13 @@ const D3NetworkV2 = () => {
                   return false;
                 }
               })
-              .attr("opacity", 1);
+              .attr("opacity", 1)
+              .attr("font-size", 12 / k.current);
 
             return linksToFind.includes(l);
           })
           .style("stroke", "#F3F3F3")
           .style("stroke-width", 1);
-
-        //TODO: change this opacity only for nodes that are highlighted
-        // d3.selectAll("circle")
-        //   .filter((new_d) => {
-        //     for (let i = 0; i < linksToFind.length; i++) {
-        //       // if (new_d.name === linksToFind[i].source.name) {
-        //       //   return true;
-        //       // }
-        //       if (new_d.name === linksToFind[i].target.name) {
-        //         return true;
-        //       } else {
-        //         return false;
-        //       }
-        //     }
-        //   })
-        //   .attr("stroke", "white");
       })
       .on("mouseout", (e, d: any) => {
         const linksToFind = findAssociatedLinks(d);
@@ -371,21 +343,6 @@ const D3NetworkV2 = () => {
             .style("stroke", "#212122")
             .style("stroke-width", 1);
         }
-
-        // resets the stroke of the nodes to black
-        // d3.selectAll("circle")
-        //   .filter((new_d) => {
-        //     for (let i = 0; i < linksToFind.length; i++) {
-        //       if (new_d.name === linksToFind[i].source.name) {
-        //         return true;
-        //       } else if (new_d.name === linksToFind[i].target.name) {
-        //         return true;
-        //       } else {
-        //         return false;
-        //       }
-        //     }
-        //   })
-        //   .attr("stroke", "black");
       })
       .on("click", (e, d: any) => {
         const linksToFind = findAssociatedLinks(d);
@@ -394,7 +351,7 @@ const D3NetworkV2 = () => {
           // Turn the lines for nodes off
           d.nodeIsClicked = false;
           d3.selectAll("line")
-            .filter((l) => {
+            .filter((l: any) => {
               return linksToFind.includes(l);
             })
             .style("stroke", highlightedColor)
@@ -418,7 +375,7 @@ const D3NetworkV2 = () => {
           // Used to leave the lines always ON
           d.nodeIsClicked = true;
           d3.selectAll("line")
-            .filter((l) => {
+            .filter((l: any) => {
               return linksToFind.includes(l);
             })
             .style("stroke", highlightedColor)
@@ -438,9 +395,15 @@ const D3NetworkV2 = () => {
     // d3.forceSimulation(nodes).for;
     // .force("charge", d3.forceManyBody().strength(-5));
     // Append <text> elements for labels
-    node
+    const text = svg
+      .append("g")
+      .attr("class", "labels")
+      .selectAll("text")
+      .data(nodes)
+      .enter()
       .append("text")
-      .attr("dy", "0.31em")
+      .attr("dy", 12)
+      .attr("dx", 12)
       .attr("text-anchor", "middle")
       .text((d: any) => d.info.name)
       .attr("fill", "white")
@@ -457,12 +420,18 @@ const D3NetworkV2 = () => {
         .attr("y2", (d: any) => d.target.y);
 
       node.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
+      text.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
     }
   }, [nodes, links, width, height]);
 
   const restartSimulation = () => {
     simulation.current.restart();
   };
+
+  useEffect(() => {
+    console.log("changed");
+    d3.selectAll("text").attr("font-size", 3 * k.current);
+  }, [JSON.stringify(k.current)]);
 
   const selectNode = () => {
     const node = d3
@@ -554,64 +523,9 @@ const D3NetworkV2 = () => {
 
     findLinks([selectedNode], 0);
 
-    //************************************Used for finding entier tree */
-
-    // const traverseSourceAndTargetLinks = (node) => {
-    //   for (let i = 0; i < tmpLinks.length; i++) {
-    //     if (node.name === tmpLinks[i].source.name) {
-    //       targetLinks.push(tmpLinks[i].target);
-    //       tmpAssociatedLinks.push(tmpLinks[i]);
-    //     }
-    //     if (node.name === tmpLinks[i].target.name) {
-    //       targetLinks.push(tmpLinks[i].source);
-    //       tmpAssociatedLinks.push(tmpLinks[i]);
-    //     }
-    //     if (
-    //       node.name === tmpLinks[i].source.name ||
-    //       node.name === tmpLinks[i].target.name
-    //     ) {
-    //       console.log(tmpLinks[i]);
-    //       tmpLinks.splice(i, 1);
-    //       i -= 1;
-    //     }
-    //     j++;
-    //   }
-    //   console.log(targetLinks);
-    //   while (targetLinks.length && numberOfLayers.current > j) {
-    //     const newNode = targetLinks.pop();
-    //     traverseSourceAndTargetLinks(newNode);
-    //   }
-    // };
-
-    // traverseSourceAndTargetLinks(selectedNode);
-
-    //************************************ */
-
     return tmpAssociatedLinks;
   }
 
-  // function findAssociatedLinks(selectedNode) {
-  //   const associatedLinks = [];
-
-  //   function traverseLinks(node) {
-  //     for (let i = 0; i < links.length; i++) {
-  //       const link = links[i];
-  //       if (associatedLinks.includes(link)) return;
-  //       // console.log(link.source, node);
-  //       if (link.source.name === node.name || link.target.name === node.name) {
-  //         associatedLinks.push(link);
-  //         if (link.source !== node) {
-  //           traverseLinks(link.source);
-  //         }
-  //         if (link.target !== node) {
-  //           traverseLinks(link.target);
-  //         }
-  //       }
-  //     }
-  //   }
-  //   traverseLinks(selectedNode);
-  //   return associatedLinks;
-  // }
   return (
     <div
       style={{ backgroundColor: "#111111" }}
@@ -669,7 +583,7 @@ const D3NetworkV2 = () => {
         <label>Number of Layers to Show:</label>
         &nbsp;{reactNumLayers}
       </p>
-      <ZoomableSVG width={width} height={height} k={k}>
+      <ZoomableSVG width={width} height={height} newK={k}>
         <svg
           ref={svgRef}
           width={width}
@@ -677,7 +591,7 @@ const D3NetworkV2 = () => {
           overflow={"hidden"}
         ></svg>
       </ZoomableSVG>
-      <SideMenu nodeInfo={nodeClicked} />
+      {/* <SideMenu nodeInfo={nodeClicked} /> */}
       {clicked && <ContextMenu top={points.y} left={points.x}></ContextMenu>}
     </div>
   );
@@ -685,7 +599,7 @@ const D3NetworkV2 = () => {
 
 export default D3NetworkV2;
 
-function ZoomableSVG({ children, width, height, k, setK }: any) {
+function ZoomableSVG({ children, width, height, newK }: any) {
   const svgRef = useRef<any>();
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
@@ -693,7 +607,7 @@ function ZoomableSVG({ children, width, height, k, setK }: any) {
   useEffect(() => {
     const zoom = d3.zoom().on("zoom", (event) => {
       const { x, y, k } = event.transform;
-      k.current = k;
+      newK.current = k;
       setX(x);
       setY(y);
     });
@@ -701,7 +615,7 @@ function ZoomableSVG({ children, width, height, k, setK }: any) {
   }, []);
   return (
     <svg ref={svgRef} width={width} height={height}>
-      <g transform={`translate(${x},${y})scale(${k})`}>{children}</g>
+      <g transform={`translate(${x},${y})scale(${newK.current})`}>{children}</g>
     </svg>
   );
 }
