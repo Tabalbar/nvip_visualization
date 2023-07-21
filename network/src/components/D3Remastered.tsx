@@ -231,57 +231,27 @@ const D3Remastered = () => {
 
     simulation.current = d3
       .forceSimulation(nodes)
+      .force("charge", d3.forceCollide().radius(5).iterations(2))
+      .force(
+        "r",
+        d3
+          .forceRadial(
+            (d: any) =>
+              d.vulnerabilityInfo ? 400 : d.isVulnerableByDependency ? 0 : 800,
+            width / 2,
+            height / 2
+          )
+          .strength(2.5)
+      )
+      .on("tick", ticked)
+      .alphaTarget(0.1)
       .force(
         "link",
         d3
           .forceLink(links)
           .id((d: any) => d.name)
-          .distance(-1) //make the blue links longer
-      )
-      .force("center", d3.forceCenter(width / 2, height / 2))
-
-      .force("collide", d3.forceCollide().radius(-1))
-      .force("x", d3.forceX(width / 2).strength(0.8))
-      .force("y", d3.forceY(height / 2).strength(0.8))
-      .force("charge", d3.forceManyBody().strength(repelStrength))
-      .force(
-        "x",
-        d3.forceX(width / 2).strength((d: any) => {
-          return d.vulnerabilityInfo
-            ? vulnerableStrength
-            : d.isVulnerableByDependency
-            ? vulnerableByDependencyStrength
-            : regularStrength;
-        })
-      )
-      .force(
-        "y",
-        d3.forceY(height / 2).strength((d: any) => {
-          return d.vulnerabilityInfo
-            ? vulnerableStrength
-            : d.isVulnerableByDependency
-            ? vulnerableByDependencyStrength
-            : regularStrength;
-        })
-      )
-      .force(
-        "radial",
-        d3.forceRadial(
-          (d: any) => (!d.vulnerabilityInfo ? 800 : 200),
-
-          width / 2,
-          height / 2
-        )
-      )
-      .on("tick", ticked);
-
-    function gravity(alpha: number) {
-      return function (d: any) {
-        console.log(d);
-        d.y += (d.cy - d.y) * alpha;
-        d.x += (d.cx - d.x) * alpha;
-      };
-    }
+          .distance(5) //make the blue links longer
+      );
 
     const linkGroup = svg.append("g");
     const arrowMarkerId = "triangle";
@@ -308,7 +278,7 @@ const D3Remastered = () => {
       .data(links)
       .enter()
       .append("line")
-      .attr("stroke", "#212122")
+      // .attr("stroke", "#212122")
       // .attr("stroke", "white")
       .attr("refX", 17)
       .attr("refY", 6)
