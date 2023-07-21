@@ -72,9 +72,9 @@ const D3Remastered = () => {
   const [repelStrength] = useState(-200);
   const simulation = useRef<any>();
 
-  const vulnerableStrength = 0.4;
-  const vulnerableByDependencyStrength = 0.4;
-  const regularStrength = 0.35;
+  const vulnerableStrength = 1;
+  const vulnerableByDependencyStrength = 0.5;
+  const regularStrength = 0.1;
   const [nodeClicked, setNodeClicked] = useState(null);
 
   const { clicked, setClicked, points, setPoints } = useContextMenu();
@@ -236,17 +236,13 @@ const D3Remastered = () => {
         d3
           .forceLink(links)
           .id((d: any) => d.name)
-          .distance(100) //make the blue links longer
+          .distance(-1) //make the blue links longer
       )
-      .force("collide", d3.forceCollide().radius(8))
-      .force(
-        "radial",
-        d3.forceRadial(
-          (d: any) => (!d.vulnerabilityInfo ? 2000 : 500),
-          width / 2,
-          height / 2
-        )
-      )
+      .force("center", d3.forceCenter(width / 2, height / 2))
+
+      .force("collide", d3.forceCollide().radius(-1))
+      .force("x", d3.forceX(width / 2).strength(0.8))
+      .force("y", d3.forceY(height / 2).strength(0.8))
       .force("charge", d3.forceManyBody().strength(repelStrength))
       .force(
         "x",
@@ -258,45 +254,34 @@ const D3Remastered = () => {
             : regularStrength;
         })
       )
-      .force("y", d3.forceY(height / 2).strength(0.75))
+      .force(
+        "y",
+        d3.forceY(height / 2).strength((d: any) => {
+          return d.vulnerabilityInfo
+            ? vulnerableStrength
+            : d.isVulnerableByDependency
+            ? vulnerableByDependencyStrength
+            : regularStrength;
+        })
+      )
+      .force(
+        "radial",
+        d3.forceRadial(
+          (d: any) => (!d.vulnerabilityInfo ? 800 : 200),
 
-      // .force(
-      //   "y",
-      //   d3.forceY(height / 2).strength((d: any) => {
-      //     return d.vulnerabilityInfo
-      //       ? vulnerableStrength
-      //       : d.isVulnerableByDependency
-      //       ? vulnerableByDependencyStrength
-      //       : regularStrength;
-      //   })
-      // )
-      // .force(
-      //   "x",
-      //   d3
-      //     .forceX()
-      //     .strength((d: any) => {
-      //       return d.vulnerabilityInfo
-      //         ? vulnerableStrength
-      //         : d.isVulnerableByDependency
-      //         ? vulnerableByDependencyStrength
-      //         : regularStrength;
-      //     })
-      //     .x(width / 2)
-      // )
-      // .force(
-      //   "y",
-      //   d3
-      //     .forceY()
-      //     .strength((d: any) =>
-      //       d.vulnerabilityInfo
-      //         ? vulnerableStrength
-      //         : d.isVulnerableByDependency
-      //         ? vulnerableByDependencyStrength
-      //         : regularStrength
-      //     )
-      //     .y(height / 2)
-      // )
+          width / 2,
+          height / 2
+        )
+      )
       .on("tick", ticked);
+
+    function gravity(alpha: number) {
+      return function (d: any) {
+        console.log(d);
+        d.y += (d.cy - d.y) * alpha;
+        d.x += (d.cx - d.x) * alpha;
+      };
+    }
 
     const linkGroup = svg.append("g");
     const arrowMarkerId = "triangle";
