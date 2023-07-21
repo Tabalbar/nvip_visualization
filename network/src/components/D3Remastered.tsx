@@ -77,6 +77,8 @@ const D3Remastered = () => {
   const regularStrength = 0.1;
   const [nodeClicked, setNodeClicked] = useState(null);
 
+  const selectedNodes = [];
+
   const { clicked, setClicked, points, setPoints } = useContextMenu();
   const numberOfLayers = useRef(1);
   const [reactNumLayers, setReactNumLayers] = useState(1);
@@ -145,7 +147,6 @@ const D3Remastered = () => {
         const normalizedSeverityScore =
           (isVulnerable.ratings[0].score - minVulScore) /
           (maxVulScore - minVulScore);
-        console.log(normalizedSeverityScore);
         color = graidentColor(
           vulnerabilityColorGrad1,
           vulnerabilityColorGrad2,
@@ -170,6 +171,9 @@ const D3Remastered = () => {
       });
     }
     const visitedNode = [];
+
+    const ingoingSizes = tmpNodes.map((node: any) => node.ingoingSize);
+    console.log(Math.max(...ingoingSizes));
 
     for (let i = 0; i < sbom_data.dependencies.length; i++) {
       const dependency = sbom_data.dependencies[i];
@@ -216,7 +220,6 @@ const D3Remastered = () => {
             decreaseNumberOfLayers();
           }
           if (name === "=") {
-            console.log(numberOfLayers.current);
             // increaseNumberOfLayers();
           }
         },
@@ -231,26 +234,39 @@ const D3Remastered = () => {
 
     simulation.current = d3
       .forceSimulation(nodes)
-      .force("charge", d3.forceCollide().radius(5).iterations(2))
+      .force(
+        "charge",
+        d3
+          .forceCollide()
+          .radius((d) => d.ingoingSize)
+          .iterations(1)
+      )
       .force(
         "r",
         d3
           .forceRadial(
             (d: any) =>
-              d.vulnerabilityInfo ? 400 : d.isVulnerableByDependency ? 0 : 800,
-            width / 2,
+              d.vulnerabilityInfo ? 50 : d.isVulnerableByDependency ? 400 : 700,
+            width / 2.7,
             height / 2
           )
-          .strength(2.5)
+          .strength(3.5)
       )
       .on("tick", ticked)
-      .alphaTarget(0.1)
       .force(
         "link",
         d3
           .forceLink(links)
           .id((d: any) => d.name)
-          .distance(5) //make the blue links longer
+          .distance(10)
+        // .strength(0.8) // Make the blue links longer
+        // .strength((link: any) => {
+        //   if (link.source.vulnerabilityInfo) {
+        //     return 0.5;
+        //   } else {
+        //     return 0.1;
+        //   }
+        // })
       );
 
     const linkGroup = svg.append("g");
@@ -437,7 +453,6 @@ const D3Remastered = () => {
   }, [nodes, links, width, height]);
 
   useEffect(() => {
-    console.log("changed");
     d3.selectAll("text").attr("font-size", 3 * k.current);
   }, [JSON.stringify(k.current)]);
 
@@ -534,6 +549,21 @@ const D3Remastered = () => {
     return tmpAssociatedLinks;
   }
 
+  const turnOnTheseLinks = (links: any[]) => {
+    d3.selectAll("line")
+      .filter((l) => {
+        return links.includes(l);
+      })
+      .style("stroke", "white")
+      .style("stroke-width", 1);
+  };
+
+  const resetLinks = (links: any) => {
+    d3.selectAll("line").style("stroke", "nonde");
+
+    turnOnTheseLinks(links);
+  };
+
   return (
     <div
       style={{ backgroundColor: "#111111" }}
@@ -599,7 +629,7 @@ const D3Remastered = () => {
           overflow={"hidden"}
         ></svg>
       </ZoomableSVG>
-      {/* <SideMenu nodeInfo={nodeClicked} /> */}
+      <SideMenu nodeInfo={nodeClicked} />
       {clicked && <ContextMenu top={points.y} left={points.x}></ContextMenu>}
     </div>
   );
