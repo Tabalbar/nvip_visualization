@@ -60,7 +60,7 @@ function rgbToHex(r: number, g: number, b: number): string {
   return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
-const D3NetworkV2 = () => {
+const D3Remastered = () => {
   const [nodes, setNodes] = useState<any>([]);
   const [links, setLinks] = useState<any>([]);
 
@@ -72,9 +72,9 @@ const D3NetworkV2 = () => {
   const [repelStrength] = useState(-70);
   const simulation = useRef<any>();
 
-  const vulnerableStrength = 0.5;
-  const vulnerableByDependencyStrength = 0.3;
-  const regularStrength = 0.1;
+  const vulnerableStrength = 0.6;
+  const vulnerableByDependencyStrength = 0.6;
+  const regularStrength = 0.3;
   const [nodeClicked, setNodeClicked] = useState(null);
 
   const { clicked, setClicked, points, setPoints } = useContextMenu();
@@ -115,11 +115,8 @@ const D3NetworkV2 = () => {
         if (sbom_data.dependencies[j]["ref"] === component["bom-ref"]) {
           ingoingSize =
             sbom_data.dependencies[j]["dependsOn"].length < ingoingSize
-              ? 2
+              ? 4
               : sbom_data.dependencies[j]["dependsOn"].length;
-          if (ingoingSize > 10) {
-            ingoingSize = 10;
-          }
         }
 
         for (
@@ -245,12 +242,32 @@ const D3NetworkV2 = () => {
       .force(
         "radial",
         d3.forceRadial(
-          (d: any) => (!d.vulnerabilityInfo ? 100 : 5),
+          (d: any) => (!d.vulnerabilityInfo ? 2000 : 100),
           width / 2,
           height / 2
         )
       )
       .force("charge", d3.forceManyBody().strength(repelStrength))
+      .force(
+        "x",
+        d3.forceX(width / 2).strength((d: any) => {
+          return d.vulnerabilityInfo
+            ? vulnerableStrength
+            : d.isVulnerableByDependency
+            ? vulnerableByDependencyStrength
+            : regularStrength;
+        })
+      )
+      .force(
+        "y",
+        d3.forceY(height / 2).strength((d: any) => {
+          return d.vulnerabilityInfo
+            ? vulnerableStrength
+            : d.isVulnerableByDependency
+            ? vulnerableByDependencyStrength
+            : regularStrength;
+        })
+      )
       // .force(
       //   "x",
       //   d3
@@ -467,6 +484,14 @@ const D3NetworkV2 = () => {
     d3.selectAll("text").attr("font-size", 3 * k.current);
   }, [JSON.stringify(k.current)]);
 
+  const selectNode = () => {
+    const node = d3
+      .selectAll("circle")
+      .filter((d: any) => d.name === text)
+      .attr("fill", "yellow")
+      .attr("r", 10);
+  };
+
   const handleChangeLayers = () => {
     // First Reset all the lines. This is used when trying to decrease the number of layers.
     d3.selectAll("line")
@@ -623,7 +648,7 @@ const D3NetworkV2 = () => {
   );
 };
 
-export default D3NetworkV2;
+export default D3Remastered;
 
 function ZoomableSVG({ children, width, height, newK }: any) {
   const svgRef = useRef<any>();
