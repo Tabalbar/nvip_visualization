@@ -7,10 +7,11 @@ import "../App.css";
 
 import * as d3 from "d3";
 
-export const vulnerabilityColor = "#ef476f";
-export const isVulnerableByDependencyColor = "#6E79C0";
-export const isNotVulnerableLibrary = "#69AF50";
+export const isVulnerableByDependencyColor = "#CDC832";
+export const isNotVulnerableLibrary = "#80807F";
 const highlightedColor = "white";
+const vulnerabilityColorGrad1 = [180, 2, 6] as [number, number, number];
+const vulnerabilityColorGrad2 = [255, 240, 240] as [number, number, number];
 
 const checkIfVulnerableByDependency = (node: any) => {
   const dependencies = sbom_data.dependencies;
@@ -77,7 +78,7 @@ const D3Remastered = () => {
   const regularStrength = 0.1;
   const [nodeClicked, setNodeClicked] = useState(null);
 
-  const selectedNodes = [];
+  const selectedLinks: any[] = [];
 
   const { clicked, setClicked, points, setPoints } = useContextMenu();
   const numberOfLayers = useRef(1);
@@ -133,12 +134,6 @@ const D3Remastered = () => {
           }
         }
       }
-      const vulnerabilityColorGrad1 = [255, 50, 0] as [number, number, number];
-      const vulnerabilityColorGrad2 = [255, 255, 100] as [
-        number,
-        number,
-        number
-      ];
 
       let color = isNotVulnerableLibrary;
 
@@ -238,7 +233,7 @@ const D3Remastered = () => {
         "charge",
         d3
           .forceCollide()
-          .radius((d) => d.ingoingSize)
+          .radius((d) => d.ingoingSize + 2)
           .iterations(1)
       )
       .force(
@@ -246,7 +241,11 @@ const D3Remastered = () => {
         d3
           .forceRadial(
             (d: any) =>
-              d.vulnerabilityInfo ? 50 : d.isVulnerableByDependency ? 400 : 700,
+              d.vulnerabilityInfo
+                ? 100
+                : d.isVulnerableByDependency
+                ? 400
+                : 700,
             width / 2.7,
             height / 2
           )
@@ -259,34 +258,51 @@ const D3Remastered = () => {
           .forceLink(links)
           .id((d: any) => d.name)
           .distance(10)
-        // .strength(0.8) // Make the blue links longer
-        // .strength((link: any) => {
-        //   if (link.source.vulnerabilityInfo) {
-        //     return 0.5;
-        //   } else {
-        //     return 0.1;
-        //   }
-        // })
+          // .strength(0.8) // Make the blue links longer
+          .strength((link: any) => {
+            const areTheSameTypes =
+              (link.source.vulnerabilityInfo &&
+                link.target.vulnerabilityInfo) ||
+              (!link.source.vulnerabilityInfo &&
+                !link.target.vulnerabilityInfo) ||
+              (link.source.isVulnerableByDependency &&
+                link.target.isVulnerableByDependency);
+            const areVulnerableAndDependency =
+              (link.source.vulnerabilityInfo &&
+                link.target.isVulnerableByDependency) ||
+              (link.source.isVulnerableByDependency &&
+                link.target.vulnerabilityInfo);
+
+            if (areTheSameTypes) {
+              return 3;
+            } else if (areVulnerableAndDependency) {
+              return 2;
+            } else {
+              console.log("pushed");
+              return 0.1;
+            }
+            //   if (link.source.vulnerabilityInfo) {
+            //     if (link.target.vulnerabilityInfo) {
+            //       return 3;
+            //     } else if (link.target.isVulnerableByDependency) {
+            //       return 2;
+            //     }
+            //     return 0.1;
+            //   } else {
+            //     if (
+            //       !link.source.vulnerabilityInfo &&
+            //       !link.target.vulnerabilityInfo
+            //     ) {
+            //       return 2;
+            //     }
+            //     return 0.1;
+            //   }
+            // })
+          })
       );
 
     const linkGroup = svg.append("g");
     const arrowMarkerId = "triangle";
-    // const arrows = svg
-    //   .append("svg:defs")
-    //   .append("svg:marker")
-    //   .attr("id", arrowMarkerId)
-    //   .attr("refX", 13)
-    //   .attr("refY", 6)
-    //   .attr("markerWidth", 10)
-    //   .attr("markerHeight", 10)
-    //   .attr("orient", "auto");
-
-    // arrows
-    //   .append("path")
-    //   .attr("d", "M 0 0 10 6 0 12 0 0")
-    //   .style("fill", "white")
-    //   .style("stroke", "black")
-    //   .style("stroke-width", 1);
 
     const link: any = svg
       .append("g")
@@ -317,104 +333,56 @@ const D3Remastered = () => {
         // return 4;
       })
       .attr("fill", (d: any, i) => d.color)
-      .attr("stroke", "black")
+      .attr("stroke", "white")
+      .attr("stroke-width", 0.5)
       .on("mouseenter", function (event, d) {
         const linksToFind = findAssociatedLinks(d);
-
-        // Show lines for the node that is highlighted
-        d3.selectAll("line")
-          .filter((l: any) => {
-            d3.selectAll("text")
-              .filter((d: any) => {
-                if (d.name === l.source.name && linksToFind.includes(l)) {
-                  return true;
-                } else if (
-                  d.name === l.target.name &&
-                  linksToFind.includes(l)
-                ) {
-                  return true;
-                } else {
-                  return false;
-                }
-              })
-              .attr("opacity", 1)
-              .attr("font-size", 12 / k.current);
-
-            return linksToFind.includes(l);
-          })
-          .style("stroke", "#F3F3F3")
-          .style("stroke-width", 1);
+        turnOnTheseLinks(linksToFind);
       })
       .on("mouseout", (e, d: any) => {
-        const linksToFind = findAssociatedLinks(d);
-
-        // If node is has property true for nodeIsClicked, do not erase the lines
-        if (!d.nodeIsClicked) {
-          d3.selectAll("line")
-            .filter((l: any) => {
-              d3.selectAll("text")
-                .filter((d: any) => {
-                  if (d.name === l.source.name && linksToFind.includes(l)) {
-                    return true;
-                  } else if (
-                    d.name === l.target.name &&
-                    linksToFind.includes(l)
-                  ) {
-                    return true;
-                  } else {
-                    return false;
-                  }
-                })
-                .attr("opacity", 0);
-              return linksToFind.includes(l);
-            })
-            .style("stroke", "#111111")
-            .style("stroke-width", 1);
-        }
+        resetLinks();
       })
       .on("click", (e, d: any) => {
         const linksToFind = findAssociatedLinks(d);
+        selectedLinks.push(linksToFind);
 
         if (d.nodeIsClicked) {
           // Turn the lines for nodes off
-          d.nodeIsClicked = false;
-          d3.selectAll("line")
-            .filter((l: any) => {
-              return linksToFind.includes(l);
-            })
-            .style("stroke", highlightedColor)
-            .style("stroke-width", 1)
-            .style("opacity", 0);
-
-          d3.selectAll("line")
-            .filter((l) => {
-              return linksToFind.includes(l);
-            })
-            .style("stroke", highlightedColor)
-            .style("stroke-width", 1)
-            .style("opacity", 0.7);
-
-          d3.selectAll("circle")
-            .filter((new_d: any) => {
-              return new_d.name === d.name;
-            })
-            .attr("stroke", "black");
+          // d.nodeIsClicked = false;
+          // d3.selectAll("line")
+          //   .filter((l: any) => {
+          //     return linksToFind.includes(l);
+          //   })
+          //   .style("stroke", highlightedColor)
+          //   .style("stroke-width", 1)
+          //   .style("opacity", 0);
+          // d3.selectAll("line")
+          //   .filter((l) => {
+          //     return linksToFind.includes(l);
+          //   })
+          //   .style("stroke", highlightedColor)
+          //   .style("stroke-width", 1)
+          //   .style("opacity", 0.7);
+          // d3.selectAll("circle")
+          //   .filter((new_d: any) => {
+          //     return new_d.name === d.name;
+          //   })
+          //   .attr("stroke", "black");
         } else {
           // Used to leave the lines always ON
-          d.nodeIsClicked = true;
-          d3.selectAll("line")
-            .filter((l: any) => {
-              return linksToFind.includes(l);
-            })
-            .style("stroke", highlightedColor)
-            .style("stroke-width", 1)
-            .style("opacity", 0.7);
-
-          d3.selectAll("circle")
-            .filter((new_d: any) => {
-              return new_d.name === d.name;
-            })
-            .attr("stroke", "white");
+          // d.nodeIsClicked = true;
+          // d3.selectAll("line")
+          //   .filter((l: any) => {
+          //     return linksToFind.includes(l);
+          //   })
+          //   .style("stroke", highlightedColor)
+          //   .style("stroke-width", 1)
+          //   .style("opacity", 0.7);
+          // d3.selectAll("circle")
+          //   .filter((new_d: any) => {
+          //     return new_d.name === d.name;
+          //   })
+          //   .attr("stroke", "white");
         }
 
         setNodeClicked(d);
@@ -552,21 +520,38 @@ const D3Remastered = () => {
   const turnOnTheseLinks = (links: any[]) => {
     d3.selectAll("line")
       .filter((l) => {
+        if (links.includes(l)) {
+          console.log("true");
+        }
         return links.includes(l);
       })
       .style("stroke", "white")
       .style("stroke-width", 1);
   };
 
-  const resetLinks = (links: any) => {
-    d3.selectAll("line").style("stroke", "nonde");
+  const turnOffTheseLinks = (links: any[]) => {
+    d3.selectAll("line")
+      .filter((l) => {
+        return links.includes(l);
+      })
+      .style("stroke", "none")
+      .style("stroke-width", 1);
+  };
 
-    turnOnTheseLinks(links);
+  const resetLinks = () => {
+    d3.selectAll("line")
+      .filter((l) => {
+        if (links.includes(l)) {
+          console.log("true");
+        }
+        return selectedLinks.includes(l);
+      })
+      .style("stroke", "none");
   };
 
   return (
     <div
-      style={{ backgroundColor: "#111111" }}
+      style={{ backgroundColor: "#222222" }}
       onContextMenu={(e) => {
         e.preventDefault();
         setClicked(true);
@@ -629,7 +614,7 @@ const D3Remastered = () => {
           overflow={"hidden"}
         ></svg>
       </ZoomableSVG>
-      <SideMenu nodeInfo={nodeClicked} />
+      {/* <SideMenu nodeInfo={nodeClicked} /> */}
       {clicked && <ContextMenu top={points.y} left={points.x}></ContextMenu>}
     </div>
   );
