@@ -69,12 +69,12 @@ const D3Remastered = () => {
   const [zoomLevel, setZoomLevel] = useState(1);
 
   const [text] = useState("");
-  const [repelStrength] = useState(-70);
+  const [repelStrength] = useState(-200);
   const simulation = useRef<any>();
 
-  const vulnerableStrength = 0.6;
-  const vulnerableByDependencyStrength = 0.6;
-  const regularStrength = 0.3;
+  const vulnerableStrength = 0.4;
+  const vulnerableByDependencyStrength = 0.4;
+  const regularStrength = 0.35;
   const [nodeClicked, setNodeClicked] = useState(null);
 
   const { clicked, setClicked, points, setPoints } = useContextMenu();
@@ -93,7 +93,7 @@ const D3Remastered = () => {
     for (let i = 0; i < sbom_data.components.length; i++) {
       const component = sbom_data.components[i];
       let outgoingSize = 2;
-      let ingoingSize = 8;
+      let ingoingSize = 2;
 
       const isVulnerable: any = sbom_data.vulnerabilities.find((vuln) =>
         vuln.affects.find(
@@ -115,7 +115,7 @@ const D3Remastered = () => {
         if (sbom_data.dependencies[j]["ref"] === component["bom-ref"]) {
           ingoingSize =
             sbom_data.dependencies[j]["dependsOn"].length < ingoingSize
-              ? 4
+              ? 3
               : sbom_data.dependencies[j]["dependsOn"].length;
         }
 
@@ -242,7 +242,7 @@ const D3Remastered = () => {
       .force(
         "radial",
         d3.forceRadial(
-          (d: any) => (!d.vulnerabilityInfo ? 2000 : 100),
+          (d: any) => (!d.vulnerabilityInfo ? 2000 : 500),
           width / 2,
           height / 2
         )
@@ -258,16 +258,18 @@ const D3Remastered = () => {
             : regularStrength;
         })
       )
-      .force(
-        "y",
-        d3.forceY(height / 2).strength((d: any) => {
-          return d.vulnerabilityInfo
-            ? vulnerableStrength
-            : d.isVulnerableByDependency
-            ? vulnerableByDependencyStrength
-            : regularStrength;
-        })
-      )
+      .force("y", d3.forceY(height / 2).strength(0.75))
+
+      // .force(
+      //   "y",
+      //   d3.forceY(height / 2).strength((d: any) => {
+      //     return d.vulnerabilityInfo
+      //       ? vulnerableStrength
+      //       : d.isVulnerableByDependency
+      //       ? vulnerableByDependencyStrength
+      //       : regularStrength;
+      //   })
+      // )
       // .force(
       //   "x",
       //   d3
