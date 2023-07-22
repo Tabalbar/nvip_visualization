@@ -278,7 +278,6 @@ const D3Remastered = () => {
             } else if (areVulnerableAndDependency) {
               return 2;
             } else {
-              console.log("pushed");
               return 0.1;
             }
             //   if (link.source.vulnerabilityInfo) {
@@ -310,8 +309,6 @@ const D3Remastered = () => {
       .data(links)
       .enter()
       .append("line")
-      // .attr("stroke", "#212122")
-      // .attr("stroke", "white")
       .attr("refX", 17)
       .attr("refY", 6)
       .attr("stroke-width", 1);
@@ -341,50 +338,20 @@ const D3Remastered = () => {
       })
       .on("mouseout", (e, d: any) => {
         resetLinks();
+        console.log(selectedLinks);
       })
       .on("click", (e, d: any) => {
         const linksToFind = findAssociatedLinks(d);
-        selectedLinks.push(linksToFind);
-
-        if (d.nodeIsClicked) {
-          // Turn the lines for nodes off
-          // d.nodeIsClicked = false;
-          // d3.selectAll("line")
-          //   .filter((l: any) => {
-          //     return linksToFind.includes(l);
-          //   })
-          //   .style("stroke", highlightedColor)
-          //   .style("stroke-width", 1)
-          //   .style("opacity", 0);
-          // d3.selectAll("line")
-          //   .filter((l) => {
-          //     return linksToFind.includes(l);
-          //   })
-          //   .style("stroke", highlightedColor)
-          //   .style("stroke-width", 1)
-          //   .style("opacity", 0.7);
-          // d3.selectAll("circle")
-          //   .filter((new_d: any) => {
-          //     return new_d.name === d.name;
-          //   })
-          //   .attr("stroke", "black");
-        } else {
-          // Used to leave the lines always ON
-          // d.nodeIsClicked = true;
-          // d3.selectAll("line")
-          //   .filter((l: any) => {
-          //     return linksToFind.includes(l);
-          //   })
-          //   .style("stroke", highlightedColor)
-          //   .style("stroke-width", 1)
-          //   .style("opacity", 0.7);
-          // d3.selectAll("circle")
-          //   .filter((new_d: any) => {
-          //     return new_d.name === d.name;
-          //   })
-          //   .attr("stroke", "white");
+        let found = false;
+        for (let i = 0; i < selectedLinks.length; i++) {
+          if (JSON.stringify(selectedLinks[i]) == JSON.stringify(linksToFind)) {
+            found = true;
+            selectedLinks.splice(i, 1);
+          }
         }
-
+        if (!found) {
+          selectedLinks.push(linksToFind);
+        }
         setNodeClicked(d);
       });
 
@@ -467,13 +434,13 @@ const D3Remastered = () => {
   const increaseNumberOfLayers = () => {
     numberOfLayers.current++;
     setReactNumLayers((prev) => prev + 1);
-    handleChangeLayers();
+    // handleChangeLayers();
   };
 
   const decreaseNumberOfLayers = () => {
     numberOfLayers.current--;
     setReactNumLayers((prev) => prev - 1);
-    handleChangeLayers();
+    // handleChangeLayers();
   };
   function findAssociatedLinks(selectedNode: any) {
     const tmpAssociatedLinks: any = [];
@@ -519,34 +486,64 @@ const D3Remastered = () => {
 
   const turnOnTheseLinks = (links: any[]) => {
     d3.selectAll("line")
-      .filter((l) => {
-        if (links.includes(l)) {
-          console.log("true");
-        }
-        return links.includes(l);
-      })
-      .style("stroke", "white")
-      .style("stroke-width", 1);
-  };
+      .filter((l: any) => {
+        d3.selectAll("text")
+          .filter((t: any) => {
+            // console.log(t);
+            if (
+              (l.source.name === t.name && links.includes(l)) ||
+              (l.target.name === t.name && links.includes(l))
+            ) {
+              return true;
+            }
+            return false;
+          })
+          .attr("opacity", 1)
+          .attr("font-size", 20 / k.current);
 
-  const turnOffTheseLinks = (links: any[]) => {
-    d3.selectAll("line")
-      .filter((l) => {
         return links.includes(l);
       })
-      .style("stroke", "none")
-      .style("stroke-width", 1);
+      .style("stroke", "#FEFEFE")
+      .style("stroke-width", 2);
   };
 
   const resetLinks = () => {
     d3.selectAll("line")
-      .filter((l) => {
-        if (links.includes(l)) {
-          console.log("true");
+      .filter((l: any) => {
+        // This is checking if the links are IN the selectedLinks array
+        for (let i = 0; i < selectedLinks.length; i++) {
+          if (selectedLinks[i].includes(l)) {
+            return false;
+          }
         }
-        return selectedLinks.includes(l);
+
+        d3.selectAll("circle").filter((d: any) => {
+          if (d.name === l.source.name || d.name === l.target.name) {
+            return false;
+          } else {
+            return true;
+          }
+        });
+
+        // Just turn off all the text while not hovered
+        d3.selectAll("text").attr("opacity", 0);
+        // Returning true because I want to turn these nodes off
+
+        return true;
       })
       .style("stroke", "none");
+
+    d3.selectAll("line")
+      .filter((l) => {
+        for (let i = 0; i < selectedLinks.length; i++) {
+          if (selectedLinks[i].includes(l)) {
+            return true;
+          }
+        }
+        return false;
+      })
+      .style("stroke", "#FEFEFE")
+      .style("stroke-width", 0.5);
   };
 
   return (
@@ -614,7 +611,7 @@ const D3Remastered = () => {
           overflow={"hidden"}
         ></svg>
       </ZoomableSVG>
-      {/* <SideMenu nodeInfo={nodeClicked} /> */}
+      <SideMenu nodeInfo={nodeClicked} />
       {clicked && <ContextMenu top={points.y} left={points.x}></ContextMenu>}
     </div>
   );
