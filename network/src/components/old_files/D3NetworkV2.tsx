@@ -1,9 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
-import sbom_data from "../assets/sbom_dep2.json";
-import SideMenu from "./SideMenu";
+import sbom_data from "../../assets/sbom_dep2.json";
+import SideMenu from "../SideMenu";
 
-import useContextMenu from "../hooks/useContextMenu";
-import "../App.css";
+import useContextMenu from "../../hooks/useContextMenu";
 
 import * as d3 from "d3";
 

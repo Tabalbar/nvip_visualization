@@ -77,9 +77,15 @@ const D3Remastered = () => {
 
   const linkRef = useRef<any>(null);
   const svgRef = useRef(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
+  const [text] = useState("");
+  const [repelStrength] = useState(-200);
   const simulation = useRef<any>();
 
+  const vulnerableStrength = 1;
+  const vulnerableByDependencyStrength = 0.5;
+  const regularStrength = 0.1;
   const [nodeClicked, setNodeClicked] = useState(null);
 
   const selectedLinks: any[] = [];
@@ -95,63 +101,59 @@ const D3Remastered = () => {
   const [isSizedByIngoing, setIsSizedByIngoing] = useState(true);
 
   useEffect(() => {
+    const dependencies = sbom_data.dependencies;
     const tmpNodes: any = [];
     const tmpLinks: any = [];
-    const components = sbom_data.components;
-    const vulnerabilities = sbom_data.vulnerabilities;
-    const dependencies = sbom_data.dependencies;
-    let color = "";
-    let dimmedColor = "";
-    let outgoingSize = 2;
-    let ingoingSize = 2;
 
-    // Trying to normalize the vulnerability score
-    let vulScores = vulnerabilities.map((vuln) => {
-      // @ts-ignore
-      return vuln.ratings[0].score;
-    });
-    vulScores = vulScores.filter((vuln) => vuln !== undefined);
-    const minVulScore = Math.min(...vulScores);
-    const maxVulScore = Math.max(...vulScores);
+    for (let i = 0; i < sbom_data.components.length; i++) {
+      const component = sbom_data.components[i];
+      let outgoingSize = 2;
+      let ingoingSize = 2;
 
-    for (let i = 0; i < components.length; i++) {
-      const component = components[i];
-
-      // If the library is a vulnerability, grab the vulnerability info
-      // Else is undefined
-      const vulnerabilityInfo: any = vulnerabilities.find((vuln) =>
+      const isVulnerable: any = sbom_data.vulnerabilities.find((vuln) =>
         vuln.affects.find(
           (affect) => affect["ref"] === sbom_data.components[i]["bom-ref"]
         )
       );
 
+      let vulScores = sbom_data.vulnerabilities.map((vuln) => {
+        // @ts-ignore
+        return vuln.ratings[0].score;
+      });
+      vulScores = vulScores.filter((vuln) => vuln !== undefined);
+      const minVulScore = Math.min(...vulScores);
+      const maxVulScore = Math.max(...vulScores);
+
       const isVulnerableByDependency = checkIfVulnerableByDependency(component);
 
-      // Setting the sizes of the nodes
-      for (let j = 0; j < dependencies.length; j++) {
-        if (dependencies[j]["ref"] === component["bom-ref"]) {
-          // Ingoing
+      for (let j = 0; j < sbom_data.dependencies.length; j++) {
+        if (sbom_data.dependencies[j]["ref"] === component["bom-ref"]) {
           ingoingSize =
-            dependencies[j]["dependsOn"].length < ingoingSize
+            sbom_data.dependencies[j]["dependsOn"].length < ingoingSize
               ? 4
-              : dependencies[j]["dependsOn"].length;
+              : sbom_data.dependencies[j]["dependsOn"].length;
         }
 
-        for (let k = 0; k < dependencies[j]["dependsOn"].length; k++) {
-          if (dependencies[j]["dependsOn"][k] === component["bom-ref"]) {
-            // Outgoing
+        for (
+          let k = 0;
+          k < sbom_data.dependencies[j]["dependsOn"].length;
+          k++
+        ) {
+          if (
+            sbom_data.dependencies[j]["dependsOn"][k] === component["bom-ref"]
+          ) {
             outgoingSize++;
           }
         }
       }
 
-      color = isNotVulnerableLibrary;
-      dimmedColor = dimmedIsNotVulnerableLibrary;
+      let color = isNotVulnerableLibrary;
+      let dimmedColor = dimmedIsNotVulnerableLibrary;
 
-      if (vulnerabilityInfo) {
+      if (isVulnerable) {
         // normalize severity score
         const normalizedSeverityScore =
-          (vulnerabilityInfo.ratings[0].score - minVulScore) /
+          (isVulnerable.ratings[0].score - minVulScore) /
           (maxVulScore - minVulScore);
         color = graidentColor(
           vulnerabilityColorGrad1,
@@ -170,13 +172,12 @@ const D3Remastered = () => {
         dimmedColor = dimmedIsVulnerableByDependencyColor;
       }
 
-      // Node info
       tmpNodes.push({
         name: component["bom-ref"],
         isComponent: false,
         info: component,
         type: "library",
-        vulnerabilityInfo: vulnerabilityInfo ? vulnerabilityInfo : false,
+        vulnerabilityInfo: isVulnerable ? isVulnerable : false,
         ingoingSize: ingoingSize,
         outgoingSize: outgoingSize,
         nodeIsClicked: false,
@@ -185,10 +186,13 @@ const D3Remastered = () => {
         dimmedColor: dimmedColor,
       });
     }
+    const visitedNode = [];
 
-    // Setting the links
-    for (let i = 0; i < dependencies.length; i++) {
-      const dependency = dependencies[i];
+    const ingoingSizes = tmpNodes.map((node: any) => node.ingoingSize);
+    console.log(Math.max(...ingoingSizes));
+
+    for (let i = 0; i < sbom_data.dependencies.length; i++) {
+      const dependency = sbom_data.dependencies[i];
       for (let j = 0; j < dependency["dependsOn"].length; j++) {
         const target = dependency["ref"];
         const source = dependency["dependsOn"][j];
@@ -204,7 +208,6 @@ const D3Remastered = () => {
     linkRef.current = tmpLinks;
   }, []);
 
-  // +/- for updating the number of layers
   useEffect(() => {
     document.addEventListener(
       "keypress",
@@ -241,15 +244,20 @@ const D3Remastered = () => {
     };
   }, []);
 
+  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
   useEffect(() => {
+    const color = d3.scaleOrdinal(d3.schemeCategory10);
     const svg = d3.select(svgRef.current);
+    const squareSize = 5;
+
     simulation.current = d3
       .forceSimulation(nodes)
       .force(
         "charge",
         d3
           .forceCollide()
-          .radius((d: any) => d.ingoingSize + 2)
+          .radius((d) => d.ingoingSize + 2)
           .iterations(1)
       )
       .force(
@@ -296,8 +304,28 @@ const D3Remastered = () => {
             } else {
               return 0.1;
             }
+            //   if (link.source.vulnerabilityInfo) {
+            //     if (link.target.vulnerabilityInfo) {
+            //       return 3;
+            //     } else if (link.target.isVulnerableByDependency) {
+            //       return 2;
+            //     }
+            //     return 0.1;
+            //   } else {
+            //     if (
+            //       !link.source.vulnerabilityInfo &&
+            //       !link.target.vulnerabilityInfo
+            //     ) {
+            //       return 2;
+            //     }
+            //     return 0.1;
+            //   }
+            // })
           })
       );
+
+    const linkGroup = svg.append("g");
+    const arrowMarkerId = "triangle";
 
     const link: any = svg
       .append("g")
@@ -307,10 +335,11 @@ const D3Remastered = () => {
       .append("line")
       .attr("refX", 17)
       .attr("refY", 6)
-      .attr("stroke-width", 1)
-      .attr("class", "flowDashedLine");
+      .attr("stroke-width", 1);
 
-    const squareSize = 2;
+    // d3.selectAll("line").style("opacity", 0);
+
+    link.attr("class", "flowDashedLine");
 
     const node = svg
       .append("g")
@@ -321,8 +350,9 @@ const D3Remastered = () => {
       .append("circle")
       .attr("z-index", 1)
       .attr("r", (d: any, i) => {
-        // If want to size the nodes according to the CVSSv2 score
+        //If want to size the nodes according to the CVSSv2 score
         return d.ingoingSize;
+        // return 4;
       })
       .attr("fill", (d: any, i) => d.color)
       .attr("stroke", "black")
@@ -347,11 +377,16 @@ const D3Remastered = () => {
         if (!found) {
           selectedLinks.push(linksToFind);
 
-          d3.selectAll("rect")
-            .filter((rect: any) => {
-              return rect.name === d.name;
-            })
-            .attr("stroke-width", 1);
+          // d3.selectAll("rect")
+          //   .filter((rect: any) => {
+          //     return rect.name === d.name;
+          //   })
+          //   .attr("stroke-width", 0.5);
+
+          // #13EC44 green
+          // #08A5F7 Cyan
+          // #280EF1 Dark Blue
+          // #00FFF0 Very Light Cyan
         } else {
           d3.selectAll("circle")
             .filter((node: any) => {
@@ -369,27 +404,76 @@ const D3Remastered = () => {
         setNodeClicked(d);
       });
 
-    const targetSquare = svg
-      .append("g")
-      .attr("class", "rect")
-      .selectAll("rect")
-      .data(nodes)
-      .enter()
-      .append("rect")
-      .attr("width", (d: any) => {
-        return (d.ingoingSize + squareSize) * 2;
-      })
-      .attr("height", (d: any) => {
-        return (d.ingoingSize + squareSize) * 2;
-      })
-      .attr("stroke", "#00FFF0")
-      .attr("fill-opacity", 0)
-      .attr("stroke-width", 0)
-      .attr("z-index", -1)
-      .attr("class", "targetDashedLine")
-      .attr("pointer-events", "none")
-      .attr("user-select", "none");
+    const re;
 
+    // const topLeft = svg
+    //   .append("g")
+    //   .selectAll("polyline")
+    //   .data(nodes)
+    //   .enter()
+    //   .append("polyline")
+    //   .attr("points", `-4,-2 ,-4 -4, -2, -4`)
+    //   .attr("stroke", "#00FFF0")
+    //   .attr("fill", "transparent")
+    //   .attr("stroke-width", 1)
+    //   .attr("z-index", -1)
+    //   .attr("scale", 3)
+    //   .attr("user-select", "none")
+    //   .attr("pointer-events", "none");
+
+    // const topRight = svg
+    //   .append("g")
+    //   .attr("class", "rect")
+    //   .selectAll("rect")
+    //   .data(nodes)
+    //   .enter()
+    //   .append("polyline")
+    //   .attr("points", "4,-2 ,4 -4, 2, -4")
+    //   .attr("stroke", "#00FFF0")
+    //   .attr("fill", "transparent")
+    //   .attr("stroke-width", 1)
+    //   .attr("z-index", -1)
+    //   .attr("user-select", "none")
+    //   .attr("pointer-events", "none");
+
+    // const bottomLeft = svg
+    //   .append("g")
+    //   .attr("class", "rect")
+    //   .selectAll("rect")
+    //   .data(nodes)
+    //   .enter()
+    //   .append("polyline")
+    //   .attr("points", "-4,2 ,-4 4, -2, 4")
+    //   .attr("stroke", "#00FFF0")
+    //   .attr("fill", "transparent")
+    //   .attr("stroke-width", 1)
+    //   .attr("z-index", -1)
+    //   .attr("user-select", "none")
+    //   .attr("pointer-events", "none");
+
+    // const bottomRight = svg
+    //   .append("g")
+    //   .attr("class", "rect")
+    //   .selectAll("rect")
+    //   .data(nodes)
+    //   .enter()
+    //   .append("polyline")
+    //   .attr("points", "4,2 ,4 4, 2, 4")
+    //   .attr("stroke", "#00FFF0")
+    //   .attr("fill", "transparent")
+    //   .attr("stroke-width", 1)
+    //   .attr("z-index", -1)
+    //   .attr("user-select", "none")
+    //   .attr("pointer-events", "none");
+
+    topLeft.attr("class", "topLeft");
+    topRight.attr("class", "topRight");
+    bottomLeft.attr("class", "bottomLeft");
+    bottomRight.attr("class", "bottomRight");
+
+    // d3.forceSimulation(nodes).for;
+    // .force("charge", d3.forceManyBody().strength(-5));
+    // Append <text> elements for labels
     const text = svg
       .append("g")
       .attr("class", "labels")
@@ -413,24 +497,62 @@ const D3Remastered = () => {
 
       node.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
       text.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
-      targetSquare.attr(
-        "transform",
-        (d: any) =>
-          `translate(${d.x - ((d.ingoingSize + squareSize) * 2) / 2},${
-            d.y - ((d.ingoingSize + squareSize) * 2) / 2
-          })`
-      );
+      topLeft.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
+      topRight.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
+      bottomLeft.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
+      bottomRight.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
     }
   }, [nodes, links, width, height]);
+
+  const selectNode = () => {
+    const node = d3
+      .selectAll("circle")
+      .filter((d: any) => d.name === text)
+      .attr("fill", "yellow")
+      .attr("r", 10);
+  };
+
+  /// This function is TBD
+  // Right now, the nodes will keep the same links if the number of layers are increased/decreased
+  // Adding this functionality will make it so number of layers are dynamically changed in the grapj
+  const handleChangeLayers = () => {
+    // resetLinks();
+    // d3.selectAll('circle').filter((d:any) => {
+    // })
+    // Get all nodes and update the number of layers to show
+    // d3.selectAll("circle").each((d: any) => {
+    //   const linksToFind = findAssociatedLinks(d);
+    //   if (d.nodeIsClicked) {
+    //     d3.selectAll("line")
+    //       .filter((l) => {
+    //         return linksToFind.includes(l);
+    //       })
+    //       .style("stroke", highlightedColor)
+    //       .style("stroke-width", 1)
+    //       .style("opacity", 0.7);
+    //   }
+    //   if (numberOfLayers.current <= 0) {
+    //     d3.selectAll("line")
+    //       .filter((l) => {
+    //         return linksToFind.includes(l);
+    //       })
+    //       .style("stroke", highlightedColor)
+    //       .style("stroke-width", 1)
+    //       .style("opacity", 0);
+    //   }
+    // });
+  };
 
   const increaseNumberOfLayers = () => {
     numberOfLayers.current++;
     setReactNumLayers((prev) => prev + 1);
+    handleChangeLayers();
   };
 
   const decreaseNumberOfLayers = () => {
     numberOfLayers.current--;
     setReactNumLayers((prev) => prev - 1);
+    handleChangeLayers();
   };
   function findAssociatedLinks(selectedNode: any) {
     const tmpAssociatedLinks: any = [];
@@ -507,6 +629,16 @@ const D3Remastered = () => {
           }
         }
 
+        // d3.selectAll("circle").filter((d: any) => {
+        //   if (d.name === l.source.name || d.name === l.target.name) {
+        //     return false;
+        //   } else {
+        //     return true;
+        //   }
+        // });
+
+        // Returning true because I want to turn these nodes off
+
         return true;
       })
       .style("stroke", "none"); // Initially, turn off all links
@@ -548,6 +680,46 @@ const D3Remastered = () => {
         console.log("Right Click", e.pageX, e.pageY);
       }}
     >
+      {/* <button onClick={handleChangeLayers}>Click</button>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          selectNode();
+          simulation.current.alpha(0.5).restart();
+        }}
+      >
+        <p>
+          <label>Find Node:</label>
+          <input value={text} onChange={(e) => setText(e.target.value)} />
+        </p>
+        </form> */}
+
+      {/* <p>
+          <label>Number of Layers to Visualize:</label>
+          <input
+            type="number"
+            // ref={numberOfLayers}
+            placeholder="1"
+            onChange={(e) => {
+              numberOfLayers.current = e.target.value;
+              console.log(numberOfLayers);
+            }}
+          />
+        </p> */}
+      {/* <p>
+          <label>Repel Strength:</label>
+          <input
+            value={repelStrength}
+            onChange={(e) => setRepelStrength(e.target.value)}
+          />{" "}
+        </p>
+        <p>
+          <label>Cluster Strength</label>
+          <input
+            value={clusterStrength}
+            onChange={(e) => setClusterStrength(e.target.value)}
+          />{" "}
+        </p> */}
       <div
         style={{
           position: "absolute",

@@ -1,18 +1,27 @@
 .flowDashedLine {
-  stroke-dasharray: 7 14;
-  stroke-dashoffset: 21;
+  stroke-dasharray: 5 8;
+  stroke-dashoffset: 13;
   animation: dash 1s linear infinite;
-  /* .attr("stroke-dasharray", 10 + " " + 10)
-  .attr("stroke-dashoffset", length)
-  .transition()
-  .ease(d3.easeLinear)
-  .attr("stroke-dashoffset", 0)
-  .duration(10000); */
 }
 
 @keyframes dash {
   from {
-    stroke-dashoffset: 21;
+    stroke-dashoffset: 13;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.targetDashedLine {
+  stroke-dasharray: 3 3;
+  stroke-dashoffset: 6;
+  animation: targetDashed 1s linear infinite;
+}
+
+@keyframes targetDashed {
+  from {
+    stroke-dashoffset: 6;
   }
   to {
     stroke-dashoffset: 0;

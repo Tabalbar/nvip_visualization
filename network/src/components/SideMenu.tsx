@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  vulnerabilityColor,
-  isVulnerableByDependencyColor,
-  isNotVulnerableLibrary,
-} from "./D3NetworkV2";
+const vulnerabilityColor = "#ef476f";
+const isVulnerableByDependencyColor = "#6E79C0";
+const isNotVulnerableLibrary = "#69AF50";
 
 const SideMenu = (props: { nodeInfo: any }) => {
   const node = {
