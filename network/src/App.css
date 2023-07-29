@@ -27,3 +27,40 @@
     stroke-dashoffset: 0;
   }
 }
+
+.svgInnerring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spinClockwise 2s linear infinite;
+  background-color: blue;
+  fill: red;
+}
+
+@keyframes spinClockwise {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.svgOuterring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spinCounterClockwise 3s linear infinite;
+}
+
+@keyframes spinCounterClockwise {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+/* CSS */
+#my-svg {
+  fill: red; /* Change the color as desired */
+}

@@ -1,3 +1,4 @@
+//@ts-ignore
 import React, { useState, useEffect } from "react";
 const vulnerabilityColor = "#ef476f";
 const isVulnerableByDependencyColor = "#6E79C0";
@@ -31,6 +32,7 @@ const SideMenu = (props: { nodeInfo: any }) => {
   const [selectedNode, setSelectedNode] = useState(node);
 
   useEffect(() => {
+    console.log(props.nodeInfo);
     setSelectedNode(props.nodeInfo);
   }, [props.nodeInfo]);
   //TODO need to highlight the node that is clicked

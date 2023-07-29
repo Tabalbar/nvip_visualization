@@ -1,7 +1,10 @@
 import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 import sbom_data from "../assets/sbom_dep2.json";
 import SideMenu from "./SideMenu";
-
+import innerringFocused from "../assets/innerring_focused.svg";
+import outerringFocused from "../assets/outerring_focused.svg";
+import innerringActive from "../assets/innerring_active.svg";
+import outerringActive from "../assets/outerring_active.svg";
 import useContextMenu from "../hooks/useContextMenu";
 import "../App.css";
 
@@ -22,6 +25,8 @@ const dimmedVulnerabilityColorGrad2 = [145, 137, 145] as [
   number,
   number
 ];
+
+const rectWidth = 4;
 
 const checkIfVulnerableByDependency = (node: any) => {
   const dependencies = sbom_data.dependencies;
@@ -80,17 +85,19 @@ const D3Remastered = () => {
 
   const simulation = useRef<any>();
 
-  const [nodeClicked, setNodeClicked] = useState(null);
+  const focusedNode = useRef<any>(null); // I am using useRef because there is an issue using useState with d3 events.
+  const [reactFocusedNode, setReactFocusedNode] = useState<any>(null); // I think the useEffect declares the function at statrt but then it never updates with useState
 
-  const selectedLinks: any[] = [];
+  const selectedLinks = useRef<any>([]);
+  const selectedNodes = useRef<any>([]);
 
   const { clicked, setClicked, points, setPoints } = useContextMenu();
   const numberOfLayers = useRef(1);
-  const [reactNumLayers, setReactNumLayers] = useState(1);
 
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  const k = useRef<any>(1);
+  const width = 2630;
+  const height = 1500;
+  const [zoom, setZoom] = useState<number>(1);
+  const zoomRef = useRef<number>(1);
 
   const [isSizedByIngoing, setIsSizedByIngoing] = useState(true);
 
@@ -183,6 +190,7 @@ const D3Remastered = () => {
         color,
         isVulnerableByDependency: isVulnerableByDependency,
         dimmedColor: dimmedColor,
+        numberOfLayers: 1,
       });
     }
 
@@ -311,84 +319,156 @@ const D3Remastered = () => {
       .attr("class", "flowDashedLine");
 
     const squareSize = 2;
+    const innerringImageSize = 2;
+    const outerringImageSize = 2;
 
     const node = svg
       .append("g")
-      .attr("class", "nodes")
       .selectAll("circle")
       .data(nodes)
       .enter()
       .append("circle")
       .attr("z-index", 1)
       .attr("r", (d: any, i) => {
-        // If want to size the nodes according to the CVSSv2 score
         return d.ingoingSize;
       })
       .attr("fill", (d: any, i) => d.color)
       .attr("stroke", "black")
       .attr("stroke-width", 0.5)
-      .on("mouseenter", function (event, d) {
+      .on("mouseenter", function (event, d: any) {
         const linksToFind = findAssociatedLinks(d);
-        turnOnTheseLinks(linksToFind);
+        turnOnTheseLinksWhenHovered(linksToFind);
+        turnOnTextForNode(d);
       })
       .on("mouseout", (e, d: any) => {
         resetLinks();
-        console.log(selectedLinks);
+        turnOffTextForNodesNotInSelectedNodes();
       })
       .on("click", (e, d: any) => {
         const linksToFind = findAssociatedLinks(d);
         let found = false;
-        for (let i = 0; i < selectedLinks.length; i++) {
-          if (JSON.stringify(selectedLinks[i]) == JSON.stringify(linksToFind)) {
+        for (let i = 0; i < selectedLinks.current.length; i++) {
+          if (
+            JSON.stringify(selectedLinks.current[i]) ==
+            JSON.stringify(linksToFind)
+          ) {
             found = true;
-            selectedLinks.splice(i, 1);
+            if (focusedNode.current === d) {
+              selectedLinks.current.splice(i, 1);
+            }
           }
         }
+
+        // This if else is the logic to decide how to color the nodes
         if (!found) {
-          selectedLinks.push(linksToFind);
+          // Node is not activated, so I want to actiate and focus on it
+          selectedLinks.current.push(linksToFind);
+          focusedNode.current = d;
+          setReactFocusedNode(d);
 
-          d3.selectAll("rect")
-            .filter((rect: any) => {
-              return rect.name === d.name;
-            })
-            .attr("stroke-width", 1);
+          selectedNodes.current.push(d);
         } else {
-          d3.selectAll("circle")
-            .filter((node: any) => {
-              return d.name === node.name;
-            })
-            .attr("stroke-width", 0.5)
-            .attr("stroke", "black");
+          // If node is in focus, I want to unfocus and unactivate it
+          if (focusedNode.current === d) {
+            focusedNode.current = null;
+            setReactFocusedNode(null);
 
-          d3.selectAll("rect")
-            .filter((rect: any) => {
-              return rect.name === d.name;
-            })
-            .attr("stroke-width", 0);
+            d3.selectAll("rect")
+              .filter((rect: any) => {
+                return rect.name === d.name;
+              })
+              .attr("stroke-width", 0);
+
+            const tmpSelectedNodes = [...selectedNodes.current];
+            for (let i = 0; i < tmpSelectedNodes.length; i++) {
+              if (tmpSelectedNodes[i].name === d.name) {
+                tmpSelectedNodes.splice(i, 1);
+              }
+            }
+            selectedNodes.current = tmpSelectedNodes;
+          } else {
+            // Node is acticated, but not in focus. This is to change the focus to this node
+            focusedNode.current = d;
+            setReactFocusedNode(d);
+          }
         }
-        setNodeClicked(d);
+
+        resolveActiveAndFocusedRect();
+
+        numberOfLayers.current = d.numberOfLayers;
       });
 
-    const targetSquare = svg
-      .append("g")
-      .attr("class", "rect")
-      .selectAll("rect")
+    const inneringImageFocused = svg
+      .selectAll("imageInnerringFocused")
       .data(nodes)
       .enter()
-      .append("rect")
-      .attr("width", (d: any) => {
-        return (d.ingoingSize + squareSize) * 2;
-      })
-      .attr("height", (d: any) => {
-        return (d.ingoingSize + squareSize) * 2;
-      })
-      .attr("stroke", "#00FFF0")
-      .attr("fill-opacity", 0)
-      .attr("stroke-width", 0)
-      .attr("z-index", -1)
-      .attr("class", "targetDashedLine")
+      .append("image")
+      .attr("xlink:href", innerringFocused)
+      .attr("width", (d: any) => (d.ingoingSize + innerringImageSize) * 2.5)
+      .attr("height", (d: any) => (d.ingoingSize + innerringImageSize) * 2.5)
+      .attr("visibility", "hidden")
       .attr("pointer-events", "none")
-      .attr("user-select", "none");
+      .attr("user-select", "none")
+      .attr("class", "svgInnerring");
+
+    const outerringImageFocused = svg
+      .selectAll("imageOuterringFocused")
+      .data(nodes)
+      .enter()
+      .append("image")
+      .attr("xlink:href", outerringFocused)
+      .attr("width", (d: any) => (d.ingoingSize + outerringImageSize) * 4)
+      .attr("height", (d: any) => (d.ingoingSize + outerringImageSize) * 4)
+      .attr("visibility", "hidden")
+      .attr("pointer-events", "none")
+      .attr("user-select", "none")
+      .attr("class", "svgOuterring");
+
+    // const inneringImageActive = svg
+    //   .selectAll("imageInnerringActive")
+    //   .data(nodes)
+    //   .enter()
+    //   .append("image")
+    //   .attr("xlink:href", innerringActive)
+    //   .attr("width", (d: any) => (d.ingoingSize + innerringImageSize) * 2.5)
+    //   .attr("height", (d: any) => (d.ingoingSize + innerringImageSize) * 2.5)
+    //   .attr("visibility", "hidden")
+    //   .attr("pointer-events", "none")
+    //   .attr("user-select", "none")
+    //   .attr("class", "svgInnerring");
+
+    // const outerringImageActive = svg
+    //   .selectAll("imageOuterringActive")
+    //   .data(nodes)
+    //   .enter()
+    //   .append("image")
+    //   .attr("xlink:href", outerringActive)
+    //   .attr("width", (d: any) => (d.ingoingSize + outerringImageSize) * 4)
+    //   .attr("height", (d: any) => (d.ingoingSize + outerringImageSize) * 4)
+    //   .attr("visibility", "hidden")
+    //   .attr("pointer-events", "none")
+    //   .attr("user-select", "none")
+    //   .attr("class", "svgOuterring");
+
+    // const targetSquare = svg
+    //   .append("g")
+    //   .selectAll("rect")
+    //   .data(nodes)
+    //   .enter()
+    //   .append("rect")
+    //   .attr("width", (d: any) => {
+    //     return (d.ingoingSize + squareSize) * 2;
+    //   })
+    //   .attr("height", (d: any) => {
+    //     return (d.ingoingSize + squareSize) * 2;
+    //   })
+    //   .attr("stroke", "#00FFF0")
+    //   .attr("fill-opacity", 0)
+    //   .attr("stroke-width", 0)
+    //   .attr("z-index", -1)
+    //   .attr("class", "targetDashedLine")
+    //   .attr("pointer-events", "none")
+    //   .attr("user-select", "none");
 
     const text = svg
       .append("g")
@@ -413,24 +493,139 @@ const D3Remastered = () => {
 
       node.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
       text.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
-      targetSquare.attr(
-        "transform",
-        (d: any) =>
-          `translate(${d.x - ((d.ingoingSize + squareSize) * 2) / 2},${
-            d.y - ((d.ingoingSize + squareSize) * 2) / 2
-          })`
+
+      // targetSquare.attr(
+      //   "transform",
+      //   (d: any) =>
+      //     `translate(${d.x - ((d.ingoingSize + squareSize) * 2) / 2},${
+      //       d.y - ((d.ingoingSize + squareSize) * 2) / 2
+      //     })`
+      // );
+
+      inneringImageFocused.attr(
+        "x",
+        (d: any) => d.x - ((d.ingoingSize + innerringImageSize) * 2.5) / 2
       );
+      inneringImageFocused.attr(
+        "y",
+        (d: any) => d.y - ((d.ingoingSize + innerringImageSize) * 2.5) / 2
+      );
+
+      outerringImageFocused.attr(
+        "x",
+        (d: any) => d.x - ((d.ingoingSize + outerringImageSize) * 4) / 2
+      );
+      outerringImageFocused.attr(
+        "y",
+        (d: any) => d.y - ((d.ingoingSize + outerringImageSize) * 4) / 2
+      );
+
+      // inneringImageActive.attr(
+      //   "x",
+      //   (d: any) => d.x - ((d.ingoingSize + innerringImageSize) * 2.5) / 2
+      // );
+      // inneringImageActive.attr(
+      //   "y",
+      //   (d: any) => d.y - ((d.ingoingSize + innerringImageSize) * 2.5) / 2
+      // );
+
+      // outerringImageActive.attr(
+      //   "x",
+      //   (d: any) => d.x - ((d.ingoingSize + outerringImageSize) * 4) / 2
+      // );
+      // outerringImageActive.attr(
+      //   "y",
+      //   (d: any) => d.y - ((d.ingoingSize + outerringImageSize) * 4) / 2
+      // );
     }
   }, [nodes, links, width, height]);
 
   const increaseNumberOfLayers = () => {
-    numberOfLayers.current++;
-    setReactNumLayers((prev) => prev + 1);
+    const linksToDelete = findAssociatedLinks(focusedNode.current);
+    for (let i = 0; i < selectedLinks.current.length; i++) {
+      if (
+        JSON.stringify(selectedLinks.current[i]) ===
+        JSON.stringify(linksToDelete)
+      ) {
+        selectedLinks.current.splice(i, 1);
+      }
+    }
+    focusedNode.current.numberOfLayers++;
+    const links = findAssociatedLinks(focusedNode.current);
+    selectedLinks.current.push(links);
+    resetLinks();
+  };
+
+  const turnOffTextForNodesNotInSelectedNodes = () => {
+    d3.selectAll("text")
+      .filter((d: any) => {
+        for (let i = 0; i < selectedNodes.current.length; i++) {
+          if (selectedNodes.current[i].name === d.name) {
+            return false;
+          }
+        }
+        return true;
+      })
+      .attr("font-size", 0);
+  };
+
+  const resolveActiveAndFocusedRect = () => {
+    /**
+     * Square Target Code
+     */
+    // These next function calls tell the nodes how to color themselves
+    // Set all acticated nodes to blue
+    // d3.selectAll("rect")
+    //   .filter((rect: any) => {
+    //     return selectedNodes.current.find(
+    //       (node: any) => node.name === rect.name
+    //     );
+    //   })
+    //   .attr("stroke", "#00FFF0")
+    //   .attr("stroke-width", rectWidth / zoomRef.current);
+
+    // Only set the focused node to green
+    // d3.selectAll("rect")
+    //   .filter((rect: any) => {
+    //     return rect.name === focusedNode.current.name;
+    //   })
+    //   .attr("stroke", "#20DF20")
+    //   .attr("stroke-width", rectWidth / zoomRef.current);
+
+    /**
+     * Circle Target Code
+     */
+
+    d3.selectAll("image")
+      .filter((image: any) => {
+        return image.name === focusedNode.current.name;
+      })
+      .attr("visibility", "visible");
+
+    d3.selectAll("text")
+      .filter((d: any) => {
+        return selectedNodes.current.find((node: any) => node.name === d.name);
+      })
+      .attr("font-size", 20 / zoomRef.current);
   };
 
   const decreaseNumberOfLayers = () => {
-    numberOfLayers.current--;
-    setReactNumLayers((prev) => prev - 1);
+    const linksToDelete = findAssociatedLinks(focusedNode.current);
+    for (let i = 0; i < selectedLinks.current.length; i++) {
+      if (
+        JSON.stringify(selectedLinks.current[i]) ===
+        JSON.stringify(linksToDelete)
+      ) {
+        selectedLinks.current.splice(i, 1);
+      }
+    }
+    if (focusedNode.current.numberOfLayers > 1) {
+      focusedNode.current.numberOfLayers--;
+    }
+
+    const links = findAssociatedLinks(focusedNode.current);
+    selectedLinks.current.push(links);
+    resetLinks();
   };
   function findAssociatedLinks(selectedNode: any) {
     const tmpAssociatedLinks: any = [];
@@ -462,7 +657,7 @@ const D3Remastered = () => {
       iterationNumber++;
 
       // Only go "numberOfLayers" deep
-      if (iterationNumber < numberOfLayers.current) {
+      if (iterationNumber < selectedNode.numberOfLayers) {
         findLinks(newNodesToSearch, iterationNumber);
       } else {
         return;
@@ -474,7 +669,15 @@ const D3Remastered = () => {
     return tmpAssociatedLinks;
   }
 
-  const turnOnTheseLinks = (links: any[]) => {
+  const turnOnTextForNode = (node: any) => {
+    d3.selectAll("text")
+      .filter((d: any) => {
+        return d.name === node.name;
+      })
+      .attr("font-size", 20 / zoomRef.current);
+  };
+
+  const turnOnTheseLinksWhenHovered = (links: any[]) => {
     d3.selectAll("line")
       .filter((l: any) => {
         return links.includes(l);
@@ -501,8 +704,8 @@ const D3Remastered = () => {
     d3.selectAll("line")
       .filter((l: any) => {
         // This is checking if the links are IN the selectedLinks array
-        for (let i = 0; i < selectedLinks.length; i++) {
-          if (selectedLinks[i].includes(l)) {
+        for (let i = 0; i < selectedLinks.current.length; i++) {
+          if (selectedLinks.current[i].includes(l)) {
             return false;
           }
         }
@@ -513,15 +716,15 @@ const D3Remastered = () => {
 
     d3.selectAll("line")
       .filter((l) => {
-        for (let i = 0; i < selectedLinks.length; i++) {
-          if (selectedLinks[i].includes(l)) {
+        for (let i = 0; i < selectedLinks.current.length; i++) {
+          if (selectedLinks.current[i].includes(l)) {
             return true;
           }
         }
         return false;
       })
       .style("stroke", "#FEFEFE")
-      .style("stroke-width", 0.2);
+      .style("stroke-width", 1);
 
     d3.selectAll("circle").attr("fill", (d: any) => d.color);
   };
@@ -535,18 +738,33 @@ const D3Remastered = () => {
     setIsSizedByIngoing(false);
   };
 
+  useEffect(() => {
+    d3.selectAll("rect")
+      .filter((d: any) => {
+        return selectedNodes.current.find((node: any) => node.name === d.name);
+      })
+      .attr("stroke-width", rectWidth / zoom);
+
+    d3.selectAll("text")
+      .filter((d: any) => {
+        return selectedNodes.current.find((node: any) => node.name === d.name);
+      })
+      .attr("font-size", 20 / zoomRef.current);
+    zoomRef.current = zoom;
+  }, [zoom]);
+
   return (
     <div
       style={{ backgroundColor: "#222222" }}
-      onContextMenu={(e) => {
-        e.preventDefault();
-        setClicked(true);
-        setPoints({
-          x: e.pageX,
-          y: e.pageY,
-        });
-        console.log("Right Click", e.pageX, e.pageY);
-      }}
+      // onContextMenu={(e) => {
+      //   e.preventDefault();
+      //   setClicked(true);
+      //   setPoints({
+      //     x: e.pageX,
+      //     y: e.pageY,
+      //   });
+      //   console.log("Right Click", e.pageX, e.pageY);
+      // }}
     >
       <div
         style={{
@@ -561,7 +779,7 @@ const D3Remastered = () => {
       >
         <p style={{ fontSize: 30, margin: "1rem" }}>
           <label>Number of Layers to Show:</label>
-          &nbsp;{reactNumLayers}
+          &nbsp;{numberOfLayers.current}
         </p>
         <button
           style={{
@@ -579,7 +797,7 @@ const D3Remastered = () => {
           Size By # Outgoing Links
         </button>
       </div>
-      <ZoomableSVG width={width} height={height} newK={k}>
+      <ZoomableSVG width={width} height={height} zoom={zoom} setZoom={setZoom}>
         <svg
           ref={svgRef}
           width={width}
@@ -587,7 +805,7 @@ const D3Remastered = () => {
           overflow={"hidden"}
         ></svg>
       </ZoomableSVG>
-      <SideMenu nodeInfo={nodeClicked} />
+      {/* <SideMenu nodeInfo={reactFocusedNode} /> */}
       {clicked && <ContextMenu top={points.y} left={points.x}></ContextMenu>}
     </div>
   );
@@ -595,23 +813,23 @@ const D3Remastered = () => {
 
 export default D3Remastered;
 
-function ZoomableSVG({ children, width, height, newK }: any) {
+function ZoomableSVG({ children, width, height, zoom, setZoom }: any) {
   const svgRef = useRef<any>();
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
 
   useEffect(() => {
-    const zoom = d3.zoom().on("zoom", (event) => {
+    const z = d3.zoom().on("zoom", (event) => {
       const { x, y, k } = event.transform;
-      newK.current = k;
+      setZoom(k);
       setX(x);
       setY(y);
     });
-    d3.select(svgRef.current).call(zoom);
+    d3.select(svgRef.current).call(z);
   }, []);
   return (
     <svg ref={svgRef} width={width} height={height}>
-      <g transform={`translate(${x},${y})scale(${newK.current})`}>{children}</g>
+      <g transform={`translate(${x},${y})scale(${zoom})`}>{children}</g>
     </svg>
   );
 }
