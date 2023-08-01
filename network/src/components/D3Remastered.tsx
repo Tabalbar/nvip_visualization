@@ -320,6 +320,7 @@ const D3Remastered = () => {
       .attr("refY", 6)
       .attr("stroke-width", 1)
       .attr("class", "flowDashedLine");
+    // .attr("filter", "drop-shadow(0px 0px 20px rgb(0 230 230))");
 
     const squareSize = 2;
     const innerringImageSize = 2;
@@ -440,6 +441,10 @@ const D3Remastered = () => {
       .attr("fill", "white")
       .attr("user-select", "none")
       .attr("pointer-events", "none")
+      .attr("sroke-width", "22")
+      .attr("stroke", "black")
+      .attr("paint-order", "stroke")
+      .attr("filter", "drop-shadow(0px 0px 20px rgb(0 230 230))")
       .attr("font-size", 0);
 
     const line: any = svg
@@ -722,8 +727,8 @@ const D3Remastered = () => {
         }
         return false;
       })
-      .style("stroke", "#FEFEFE")
-      .style("stroke-width", 1);
+      .style("stroke", "white")
+      .style("stroke-width", 0.4);
 
     d3.selectAll("circle").attr("fill", (d: any) => d.color);
   };
