@@ -91,8 +91,6 @@ const D3Remastered = () => {
   const selectedLinks = useRef<any>([]);
   const selectedNodes = useRef<any>([]);
 
-  const [, setForceRender] = useState(false);
-
   const { clicked, setClicked, points, setPoints } = useContextMenu();
   const numberOfLayers = useRef(1);
 
@@ -507,7 +505,6 @@ const D3Remastered = () => {
     focusedNode.current.numberOfLayers++;
     const links = findAssociatedLinks(focusedNode.current);
     selectedLinks.current.push(links);
-    setForceRender((prev) => !prev);
     resetLinks();
   };
 
@@ -602,8 +599,6 @@ const D3Remastered = () => {
 
     const links = findAssociatedLinks(focusedNode.current);
     selectedLinks.current.push(links);
-    setForceRender((prev) => !prev);
-
     resetLinks();
   };
   function findAssociatedLinks(selectedNode: any) {
@@ -728,6 +723,18 @@ const D3Remastered = () => {
     d3.selectAll("circle").attr("fill", (d: any) => d.color);
   };
 
+  const handleChangeToIngoingLinks = () => {
+    d3.selectAll("circle").attr("r", (d: any) => d.ingoingSize);
+    setIsSizedByIngoing(true);
+  };
+  const handleChangeToOutgoingLinks = () => {
+    d3.selectAll("circle").attr("r", (d: any) => {
+      console.log(d.outgoingSize);
+      return d.outgoingSize;
+    });
+    setIsSizedByIngoing(false);
+  };
+
   useEffect(() => {
     d3.selectAll("rect")
       .filter((d: any) => {
@@ -769,12 +776,9 @@ const D3Remastered = () => {
       >
         <p style={{ fontSize: 30, margin: "1rem" }}>
           <label>Number of Layers to Show:</label>
-          &nbsp;
-          {reactFocusedNode
-            ? reactFocusedNode.numberOfLayers
-            : "No Node selected"}
+          &nbsp;{numberOfLayers.current}
         </p>
-        {/* <button
+        <button
           style={{
             marginRight: "1rem",
             background: isSizedByIngoing ? "#326FCD" : "#848484",
@@ -788,7 +792,7 @@ const D3Remastered = () => {
           onClick={handleChangeToOutgoingLinks}
         >
           Size By # Outgoing Links
-        </button> */}
+        </button>
       </div>
       <ZoomableSVG width={width} height={height} zoom={zoom} setZoom={setZoom}>
         <svg
@@ -798,7 +802,7 @@ const D3Remastered = () => {
           overflow={"hidden"}
         ></svg>
       </ZoomableSVG>
-      <SideMenu nodeInfo={reactFocusedNode} />
+      {/* <SideMenu nodeInfo={reactFocusedNode} /> */}
       {clicked && <ContextMenu top={points.y} left={points.x}></ContextMenu>}
     </div>
   );
