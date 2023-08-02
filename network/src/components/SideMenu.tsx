@@ -43,7 +43,7 @@ const SideMenu = (props: { nodeInfo: any }) => {
         position: "absolute",
         width: "600px",
         // width: "300px",
-        height: "100vh",
+        height: "95vh",
         backgroundColor: "#414141",
         right: "0",
         top: "0",

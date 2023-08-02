@@ -7,6 +7,7 @@ import innerringActive from "../assets/innerring_active.svg";
 import outerringActive from "../assets/outerring_active.svg";
 import useContextMenu from "../hooks/useContextMenu";
 import "../App.css";
+import error1 from "../assets/error1.wav";
 
 import * as d3 from "d3";
 
@@ -96,7 +97,7 @@ const D3Remastered = () => {
   const { clicked, setClicked, points, setPoints } = useContextMenu();
   const numberOfLayers = useRef(1);
 
-  const width = 2630;
+  const width = 2500;
   const height = 1500;
   const [zoom, setZoom] = useState<number>(1);
   const zoomRef = useRef<number>(1);
@@ -374,6 +375,18 @@ const D3Remastered = () => {
         } else {
           // If node is in focus, I want to unfocus and unactivate it
           if (focusedNode.current === d) {
+            d3.select("body")
+              .selectAll(".svgOuterring")
+              .filter((d: any) => {
+                return d.name === focusedNode.current.name;
+              })
+              .attr("visibility", "hidden");
+            d3.select("body")
+              .selectAll(".svgInnerring")
+              .filter((d: any) => {
+                return d.name === focusedNode.current.name;
+              })
+              .attr("visibility", "hidden");
             focusedNode.current = null;
             setReactFocusedNode(null);
 
@@ -511,6 +524,12 @@ const D3Remastered = () => {
     }
     focusedNode.current.numberOfLayers++;
     const links = findAssociatedLinks(focusedNode.current);
+    if (JSON.stringify(links) === JSON.stringify(linksToDelete)) {
+      focusedNode.current.numberOfLayers--;
+      // window.alert("No more layers to add");
+      const audio = document.getElementById("error1") as HTMLAudioElement;
+      audio.play();
+    }
     selectedLinks.current.push(links);
     setForceRender((prev) => !prev);
     resetLinks();
@@ -603,6 +622,9 @@ const D3Remastered = () => {
     }
     if (focusedNode.current.numberOfLayers > 1) {
       focusedNode.current.numberOfLayers--;
+    } else {
+      const audio = document.getElementById("error1") as HTMLAudioElement;
+      audio.play();
     }
 
     const links = findAssociatedLinks(focusedNode.current);
@@ -751,6 +773,7 @@ const D3Remastered = () => {
   return (
     <div
       style={{ backgroundColor: "#222222" }}
+
       // onContextMenu={(e) => {
       //   e.preventDefault();
       //   setClicked(true);
@@ -773,7 +796,7 @@ const D3Remastered = () => {
         }}
       >
         <p style={{ fontSize: 30, margin: "1rem" }}>
-          <label>Number of Layers to Show:</label>
+          <label>Tree Depth:</label>
           &nbsp;
           {reactFocusedNode
             ? reactFocusedNode.numberOfLayers
@@ -794,14 +817,10 @@ const D3Remastered = () => {
         >
           Size By # Outgoing Links
         </button> */}
+        <audio src={error1} id="error1"></audio>
       </div>
       <ZoomableSVG width={width} height={height} zoom={zoom} setZoom={setZoom}>
-        <svg
-          ref={svgRef}
-          width={width}
-          height={height}
-          overflow={"hidden"}
-        ></svg>
+        <svg ref={svgRef} width={width} height={height}></svg>
       </ZoomableSVG>
       <SideMenu nodeInfo={reactFocusedNode} />
       {clicked && <ContextMenu top={points.y} left={points.x}></ContextMenu>}
