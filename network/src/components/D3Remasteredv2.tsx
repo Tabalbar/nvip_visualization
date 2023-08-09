@@ -124,7 +124,6 @@ const D3Remastered = () => {
     vulScores = vulScores.filter((vuln) => vuln !== undefined);
     const minVulScore = Math.min(...vulScores);
     const maxVulScore = Math.max(...vulScores);
-
     for (let i = 0; i < components.length; i++) {
       let outgoingSize = 2;
       let outgoingLinks = 0;
@@ -260,9 +259,9 @@ const D3Remastered = () => {
       );
     };
   }, []);
-
   useEffect(() => {
     const svg = d3.select(svgRef.current);
+
     simulation.current = d3
       .forceSimulation(nodes)
       .force(
@@ -278,14 +277,18 @@ const D3Remastered = () => {
           .forceRadial(
             (d: any) =>
               d.vulnerabilityInfo
-                ? 100
+                ? d.vulnerabilityInfo.ratings.length
+                  ? // ?
+                    250 - d.vulnerabilityInfo.ratings[0].score * 20
+                  : // d.vulnerabilityInfo.ratings[0].score * 20
+                    300
                 : d.isVulnerableByDependency
                 ? 400
                 : 700,
-            width / 2.7,
+            width / 2,
             height / 2
           )
-          .strength(3.5)
+          .strength(2.5)
       )
       .on("tick", ticked)
       .force(
@@ -293,30 +296,30 @@ const D3Remastered = () => {
         d3
           .forceLink(links)
           .id((d: any) => d.name)
-          .distance(0)
-          // .strength(0.8) // Make the blue links longer
-          .strength((link: any) => {
-            const areTheSameTypes =
-              (link.source.vulnerabilityInfo &&
-                link.target.vulnerabilityInfo) ||
-              (!link.source.vulnerabilityInfo &&
-                !link.target.vulnerabilityInfo) ||
-              (link.source.isVulnerableByDependency &&
-                link.target.isVulnerableByDependency);
-            const areVulnerableAndDependency =
-              (link.source.vulnerabilityInfo &&
-                link.target.isVulnerableByDependency) ||
-              (link.source.isVulnerableByDependency &&
-                link.target.vulnerabilityInfo);
+          .distance(10)
+          .strength(0.2) // Make the blue links longer
+        // .strength((link: any) => {
+        //   const areTheSameTypes =
+        //     (link.source.vulnerabilityInfo &&
+        //       link.target.vulnerabilityInfo) ||
+        //     (!link.source.vulnerabilityInfo &&
+        //       !link.target.vulnerabilityInfo) ||
+        //     (link.source.isVulnerableByDependency &&
+        //       link.target.isVulnerableByDependency);
+        //   const areVulnerableAndDependency =
+        //     (link.source.vulnerabilityInfo &&
+        //       link.target.isVulnerableByDependency) ||
+        //     (link.source.isVulnerableByDependency &&
+        //       link.target.vulnerabilityInfo);
 
-            if (areTheSameTypes) {
-              return 3;
-            } else if (areVulnerableAndDependency) {
-              return 2;
-            } else {
-              return 0;
-            }
-          })
+        //   if (areTheSameTypes) {
+        //     return 2;
+        //   } else if (areVulnerableAndDependency) {
+        //     return 1;
+        //   } else {
+        //     return 0;
+        //   }
+        // })
       );
 
     const link: any = svg
@@ -352,10 +355,15 @@ const D3Remastered = () => {
         const linksToFind = findAssociatedLinks(d);
         turnOnTheseLinksWhenHovered(linksToFind);
         turnOnTextForNode(d);
+        setReactFocusedNode(d);
       })
       .on("mouseout", (e, d: any) => {
         resetLinks();
         turnOffTextForNodesNotInSelectedNodes();
+        if (focusedNode.current === null) {
+          console.log("is null");
+        }
+        setReactFocusedNode(focusedNode.current);
       })
       .on("click", (e, d: any) => {
         const linksToFind = findAssociatedLinks(d);

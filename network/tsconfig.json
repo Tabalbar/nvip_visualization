@@ -21,6 +21,6 @@
     "noFallthroughCasesInSwitch": true,
     "noEmitOnError": false
   },
-  "include": ["src"],
+  "include": ["src", "../D3Remastered copy.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

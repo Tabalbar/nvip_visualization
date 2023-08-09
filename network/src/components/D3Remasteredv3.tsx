@@ -7,6 +7,7 @@ import innerringActive from "../assets/innerring_active.svg";
 import outerringActive from "../assets/outerring_active.svg";
 import useContextMenu from "../hooks/useContextMenu";
 import "../App.css";
+import error1 from "../assets/error5.mp3";
 
 import * as d3 from "d3";
 
@@ -91,10 +92,12 @@ const D3Remastered = () => {
   const selectedLinks = useRef<any>([]);
   const selectedNodes = useRef<any>([]);
 
+  const [, setForceRender] = useState(false);
+
   const { clicked, setClicked, points, setPoints } = useContextMenu();
   const numberOfLayers = useRef(1);
 
-  const width = 2630;
+  const width = 2500;
   const height = 1500;
   const [zoom, setZoom] = useState<number>(1);
   const zoomRef = useRef<number>(1);
@@ -109,8 +112,9 @@ const D3Remastered = () => {
     const dependencies = sbom_data.dependencies;
     let color = "";
     let dimmedColor = "";
-    let outgoingSize = 2;
+
     let ingoingSize = 2;
+    let ingoingLinks = 0;
 
     // Trying to normalize the vulnerability score
     let vulScores = vulnerabilities.map((vuln) => {
@@ -120,8 +124,10 @@ const D3Remastered = () => {
     vulScores = vulScores.filter((vuln) => vuln !== undefined);
     const minVulScore = Math.min(...vulScores);
     const maxVulScore = Math.max(...vulScores);
-
     for (let i = 0; i < components.length; i++) {
+      let outgoingSize = 2;
+      let outgoingLinks = 0;
+
       const component = components[i];
 
       // If the library is a vulnerability, grab the vulnerability info
@@ -137,6 +143,7 @@ const D3Remastered = () => {
       // Setting the sizes of the nodes
       for (let j = 0; j < dependencies.length; j++) {
         if (dependencies[j]["ref"] === component["bom-ref"]) {
+          ingoingLinks = dependencies[j]["dependsOn"].length;
           // Ingoing
           ingoingSize =
             dependencies[j]["dependsOn"].length < ingoingSize
@@ -148,6 +155,7 @@ const D3Remastered = () => {
           if (dependencies[j]["dependsOn"][k] === component["bom-ref"]) {
             // Outgoing
             outgoingSize++;
+            outgoingLinks++;
           }
         }
       }
@@ -188,6 +196,8 @@ const D3Remastered = () => {
         outgoingSize: outgoingSize,
         nodeIsClicked: false,
         color,
+        ingoingLinks,
+        outgoingLinks,
         isVulnerableByDependency: isVulnerableByDependency,
         dimmedColor: dimmedColor,
         numberOfLayers: 1,
@@ -249,7 +259,7 @@ const D3Remastered = () => {
       );
     };
   }, []);
-
+  console.log(links);
   useEffect(() => {
     const svg = d3.select(svgRef.current);
     simulation.current = d3
@@ -267,14 +277,18 @@ const D3Remastered = () => {
           .forceRadial(
             (d: any) =>
               d.vulnerabilityInfo
-                ? 100
+                ? d.vulnerabilityInfo.ratings.length
+                  ? // ?
+                    250 - d.vulnerabilityInfo.ratings[0].score * 20
+                  : // d.vulnerabilityInfo.ratings[0].score * 20
+                    300
                 : d.isVulnerableByDependency
                 ? 400
                 : 700,
-            width / 2.7,
+            width / 2,
             height / 2
           )
-          .strength(3.5)
+          .strength(2.5)
       )
       .on("tick", ticked)
       .force(
@@ -283,29 +297,29 @@ const D3Remastered = () => {
           .forceLink(links)
           .id((d: any) => d.name)
           .distance(10)
-          // .strength(0.8) // Make the blue links longer
-          .strength((link: any) => {
-            const areTheSameTypes =
-              (link.source.vulnerabilityInfo &&
-                link.target.vulnerabilityInfo) ||
-              (!link.source.vulnerabilityInfo &&
-                !link.target.vulnerabilityInfo) ||
-              (link.source.isVulnerableByDependency &&
-                link.target.isVulnerableByDependency);
-            const areVulnerableAndDependency =
-              (link.source.vulnerabilityInfo &&
-                link.target.isVulnerableByDependency) ||
-              (link.source.isVulnerableByDependency &&
-                link.target.vulnerabilityInfo);
+          .strength(0.2) // Make the blue links longer
+        // .strength((link: any) => {
+        //   const areTheSameTypes =
+        //     (link.source.vulnerabilityInfo &&
+        //       link.target.vulnerabilityInfo) ||
+        //     (!link.source.vulnerabilityInfo &&
+        //       !link.target.vulnerabilityInfo) ||
+        //     (link.source.isVulnerableByDependency &&
+        //       link.target.isVulnerableByDependency);
+        //   const areVulnerableAndDependency =
+        //     (link.source.vulnerabilityInfo &&
+        //       link.target.isVulnerableByDependency) ||
+        //     (link.source.isVulnerableByDependency &&
+        //       link.target.vulnerabilityInfo);
 
-            if (areTheSameTypes) {
-              return 3;
-            } else if (areVulnerableAndDependency) {
-              return 2;
-            } else {
-              return 0.1;
-            }
-          })
+        //   if (areTheSameTypes) {
+        //     return 2;
+        //   } else if (areVulnerableAndDependency) {
+        //     return 1;
+        //   } else {
+        //     return 0;
+        //   }
+        // })
       );
 
     const link: any = svg
@@ -318,6 +332,7 @@ const D3Remastered = () => {
       .attr("refY", 6)
       .attr("stroke-width", 1)
       .attr("class", "flowDashedLine");
+    // .attr("filter", "drop-shadow(0px 0px 20px rgb(0 230 230))");
 
     const squareSize = 2;
     const innerringImageSize = 2;
@@ -371,6 +386,18 @@ const D3Remastered = () => {
         } else {
           // If node is in focus, I want to unfocus and unactivate it
           if (focusedNode.current === d) {
+            d3.select("body")
+              .selectAll(".svgOuterring")
+              .filter((d: any) => {
+                return d.name === focusedNode.current.name;
+              })
+              .attr("visibility", "hidden");
+            d3.select("body")
+              .selectAll(".svgInnerring")
+              .filter((d: any) => {
+                return d.name === focusedNode.current.name;
+              })
+              .attr("visibility", "hidden");
             focusedNode.current = null;
             setReactFocusedNode(null);
 
@@ -438,6 +465,10 @@ const D3Remastered = () => {
       .attr("fill", "white")
       .attr("user-select", "none")
       .attr("pointer-events", "none")
+      .attr("sroke-width", "22")
+      .attr("stroke", "black")
+      .attr("paint-order", "stroke")
+      .attr("filter", "drop-shadow(0px 0px 20px rgb(0 230 230))")
       .attr("font-size", 0);
 
     const line: any = svg
@@ -504,7 +535,14 @@ const D3Remastered = () => {
     }
     focusedNode.current.numberOfLayers++;
     const links = findAssociatedLinks(focusedNode.current);
+    if (JSON.stringify(links) === JSON.stringify(linksToDelete)) {
+      focusedNode.current.numberOfLayers--;
+      // window.alert("No more layers to add");
+      const audio = document.getElementById("error1") as HTMLAudioElement;
+      audio.play();
+    }
     selectedLinks.current.push(links);
+    setForceRender((prev) => !prev);
     resetLinks();
   };
 
@@ -595,10 +633,15 @@ const D3Remastered = () => {
     }
     if (focusedNode.current.numberOfLayers > 1) {
       focusedNode.current.numberOfLayers--;
+    } else {
+      const audio = document.getElementById("error1") as HTMLAudioElement;
+      audio.play();
     }
 
     const links = findAssociatedLinks(focusedNode.current);
     selectedLinks.current.push(links);
+    setForceRender((prev) => !prev);
+
     resetLinks();
   };
   function findAssociatedLinks(selectedNode: any) {
@@ -717,22 +760,10 @@ const D3Remastered = () => {
         }
         return false;
       })
-      .style("stroke", "#FEFEFE")
-      .style("stroke-width", 1);
+      .style("stroke", "white")
+      .style("stroke-width", 0.4);
 
     d3.selectAll("circle").attr("fill", (d: any) => d.color);
-  };
-
-  const handleChangeToIngoingLinks = () => {
-    d3.selectAll("circle").attr("r", (d: any) => d.ingoingSize);
-    setIsSizedByIngoing(true);
-  };
-  const handleChangeToOutgoingLinks = () => {
-    d3.selectAll("circle").attr("r", (d: any) => {
-      console.log(d.outgoingSize);
-      return d.outgoingSize;
-    });
-    setIsSizedByIngoing(false);
   };
 
   useEffect(() => {
@@ -753,6 +784,7 @@ const D3Remastered = () => {
   return (
     <div
       style={{ backgroundColor: "#222222" }}
+
       // onContextMenu={(e) => {
       //   e.preventDefault();
       //   setClicked(true);
@@ -763,46 +795,12 @@ const D3Remastered = () => {
       //   console.log("Right Click", e.pageX, e.pageY);
       // }}
     >
-      <div
-        style={{
-          position: "absolute",
-          top: "2rem",
-          left: "2rem",
-          background: "#F3F3F3",
-          padding: "0.5rem",
-          color: "black",
-          borderRadius: "5px",
-        }}
-      >
-        <p style={{ fontSize: 30, margin: "1rem" }}>
-          <label>Number of Layers to Show:</label>
-          &nbsp;{numberOfLayers.current}
-        </p>
-        <button
-          style={{
-            marginRight: "1rem",
-            background: isSizedByIngoing ? "#326FCD" : "#848484",
-          }}
-          onClick={handleChangeToIngoingLinks}
-        >
-          Size By # Ingoing Links
-        </button>
-        <button
-          style={{ background: isSizedByIngoing ? "#848484" : "#326FCD" }}
-          onClick={handleChangeToOutgoingLinks}
-        >
-          Size By # Outgoing Links
-        </button>
-      </div>
+      <audio src={error1} id="error1"></audio>
+
       <ZoomableSVG width={width} height={height} zoom={zoom} setZoom={setZoom}>
-        <svg
-          ref={svgRef}
-          width={width}
-          height={height}
-          overflow={"hidden"}
-        ></svg>
+        <svg ref={svgRef} width={width} height={height}></svg>
       </ZoomableSVG>
-      {/* <SideMenu nodeInfo={reactFocusedNode} /> */}
+      <SideMenu nodeInfo={reactFocusedNode} />
       {clicked && <ContextMenu top={points.y} left={points.x}></ContextMenu>}
     </div>
   );
