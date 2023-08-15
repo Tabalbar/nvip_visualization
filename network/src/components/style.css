@@ -15,3 +15,36 @@ th {
 /* tr:nth-child(even) {
   background-color: #dddddd;
 } */
+
+#colorTable {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+/* style={{
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+}} */
+#colorTable td,
+#colorTable th {
+  border: 1px solid #0c0c0c;
+  padding: 8px;
+}
+
+#colorTable tr:nth-child(even) {
+  background-color: #a8a8a8;
+}
+
+#colorTable tr:hover {
+  background-color: #fffd92;
+}
+
+#colorTable th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #686868;
+  color: white;
+}

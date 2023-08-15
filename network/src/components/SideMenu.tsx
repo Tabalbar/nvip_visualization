@@ -232,11 +232,12 @@ const SideMenu = (props: { nodeInfo: any }) => {
             border: "1px solid black",
             width: "350px",
             display: "flex",
-            backgroundColor: "#575758",
-            boxShadow: "5px 5px  black",
+
             flexDirection: "column",
             // alignItems: "center",
             textAlign: "left",
+            backgroundColor: "#575758",
+            boxShadow: "5px 5px  black",
             borderRadius: "10px",
             overflow: "hidden",
           }}

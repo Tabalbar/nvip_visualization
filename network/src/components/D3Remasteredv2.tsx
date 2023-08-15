@@ -77,7 +77,7 @@ function rgbToHex(r: number, g: number, b: number): string {
   return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
-const D3Remastered = () => {
+const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
   const [nodes, setNodes] = useState<any>([]);
   const [links, setLinks] = useState<any>([]);
 
@@ -132,11 +132,19 @@ const D3Remastered = () => {
 
       // If the library is a vulnerability, grab the vulnerability info
       // Else is undefined
-      const vulnerabilityInfo: any = vulnerabilities.find((vuln) =>
+      let vulnerabilityInfo: any = vulnerabilities.find((vuln) =>
         vuln.affects.find(
           (affect) => affect["ref"] === sbom_data.components[i]["bom-ref"]
         )
       );
+      if (vulnerabilityInfo) {
+        const ratings = vulnerabilityInfo.ratings;
+        for (let i = 0; i < ratings.length; i++) {
+          if (isNaN(ratings[i].score)) {
+            ratings[i].score = 10;
+          }
+        }
+      }
 
       const isVulnerableByDependency = checkIfVulnerableByDependency(component);
 
@@ -360,9 +368,7 @@ const D3Remastered = () => {
       .on("mouseout", (e, d: any) => {
         resetLinks();
         turnOffTextForNodesNotInSelectedNodes();
-        if (focusedNode.current === null) {
-          console.log("is null");
-        }
+
         setReactFocusedNode(focusedNode.current);
       })
       .on("click", (e, d: any) => {
@@ -800,6 +806,22 @@ const D3Remastered = () => {
       //   console.log("Right Click", e.pageX, e.pageY);
       // }}
     >
+      <div
+        style={{
+          position: "absolute",
+          // width: "300px",
+          right: "1rem",
+          top: "1rem",
+        }}
+      >
+        {" "}
+        <button
+          style={{ backgroundColor: "#23A9DC", boxShadow: "5px 5px black" }}
+          onClick={() => props.setIsHelpMenuOpen(true)}
+        >
+          Help Menu
+        </button>
+      </div>
       <audio src={error1} id="error1"></audio>
 
       <ZoomableSVG width={width} height={height} zoom={zoom} setZoom={setZoom}>
