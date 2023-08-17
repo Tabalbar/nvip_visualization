@@ -49,7 +49,8 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
               top: "1rem",
               left: "1rem",
               zIndex: 2,
-              backgroundColor: "rgb(239,71,111)",
+              backgroundColor: "rgb(220,40,110)",
+              borderRadius: "3px",
             }}
             onClick={() => props.setIsHelpMenuOpen(false)}
           >
@@ -72,7 +73,7 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
           {/**
            * Representation
            */}
-          <div style={{ marginLeft: "1rem" }}>
+          <div>
             <div
               style={{
                 display: "flex",
@@ -89,19 +90,29 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                   textAlign: "center",
                   backgroundColor: "#a8a8a8",
                   borderRadius: "10px",
+                  height: "53.5rem",
+                  flexGrow: 1,
                 }}
               >
                 <h2 style={{ textAlign: "center" }}>Definition</h2>
                 Nodes: Components in the software project <br />
                 Links: Dependencies between components
-                <h2>Direction of links</h2>
-                <img src={links} style={{ width: "20rem" }} />
-                <p style={{ width: "30rem", textAlign: "center" }}>
+                <h2>Direction of link</h2>
+                <p
+                  style={{
+                    width: "20rem",
+                    textAlign: "center",
+                  }}
+                >
                   The animated dotted lines indicate where the library is being
                   imported. In the example above, the animated dotted lines are
                   going towards the yellow node. This means the yellow node is
                   importing the gray node.
                 </p>
+                <img
+                  src={links}
+                  style={{ width: "20rem", paddingTop: "1rem" }}
+                />
                 <div>
                   <div>
                     <h2>Size of Node</h2>
@@ -116,10 +127,10 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                           <img src={small} width={"100px"} />
                         </td>
                         <td>
-                          A small node means that it may not be importing a lot
-                          of libraries or it is not importing any libraries at
-                          all. In other words, it <strong>IS NOT</strong>{" "}
-                          dependent on other components.
+                          A smaller node means that it may either (1) not be
+                          importing a lot of libraries or (2) it is not
+                          importing any libraries at all. In other words, it
+                          does <strong>NOT</strong> depend on many components.
                         </td>
                       </tr>
 
@@ -146,9 +157,9 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                     flexDirection: "column",
                     backgroundColor: "#a8a8a8",
                     borderRadius: "10px",
-                    width: "40rem",
                     padding: "1rem",
                     height: "53.5rem",
+                    flexGrow: 1,
                   }}
                 >
                   <h2>Color of Node</h2>
@@ -171,7 +182,7 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                       </td>
                       <td>
                         Vulnerable by dependency. In other words, this component
-                        is importing from another component that is vulnerable
+                        is importing a component that is vulnerable.
                       </td>
                     </tr>
                     <tr>
@@ -213,8 +224,8 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
               borderRadius: "10px",
               padding: "1rem",
               marginTop: "1rem",
-              marginLeft: "1rem",
               textAlign: "center",
+              paddingBottom: "1.5rem",
             }}
           >
             <h2>Navigation</h2>
@@ -233,9 +244,9 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                   alignItems: "center",
                 }}
               >
-                <h3>Panning</h3>
-                <img src={pan} style={{ width: "20rem" }} />
+                <h3 style={{ marginBottom: "-0.5rem" }}>Panning</h3>
                 <p>Click and drag to pan</p>
+                <img src={pan} style={{ width: "20rem" }} />
               </div>
               <div
                 style={{
@@ -244,9 +255,10 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                   alignItems: "center",
                 }}
               >
-                <h3>Zooming</h3>
-                <img src={zoom} style={{ width: "20rem" }} />
+                <h3 style={{ marginBottom: "-0.5rem" }}>Zooming</h3>
                 <p>Scroll to Zoom</p>
+
+                <img src={zoom} style={{ width: "20rem" }} />
               </div>
             </div>
           </div>
@@ -256,6 +268,7 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
               display: "flex",
               flexDirection: "row",
               alignContent: "center",
+              justifyContent: "space-evenly",
               gap: "1rem",
             }}
           >
@@ -270,7 +283,6 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                 padding: "1rem",
                 marginTop: "1rem",
                 paddingRight: "5rem",
-                marginLeft: "1rem",
                 marginBottom: "1rem",
               }}
             >
@@ -280,6 +292,8 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-evenly",
+                  flexGrow: 1,
+                  marginBottom: "1rem",
                 }}
               >
                 <div
@@ -287,16 +301,17 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    paddingLeft: "3rem",
                   }}
                 >
                   <h3>Hovering</h3>
-                  <img src={hovering} style={{ width: "20rem" }} />
-                  Hover over a node to:
+                  <p style={{ marginBottom: "-1rem" }}>Hover over a node to:</p>
                   <ul>
                     <li>Display its name</li>
                     <li>Display its links</li>
                     <li>Display its information</li>
                   </ul>
+                  <img src={hovering} style={{ width: "18rem" }} />
                 </div>
               </div>
             </div>
@@ -312,6 +327,7 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                 marginTop: "1rem",
                 textAlign: "center",
                 marginBottom: "1rem",
+                flexGrow: 1,
               }}
             >
               <h2>Clicking on a node</h2>
@@ -321,7 +337,7 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-evenly",
-                  width: "57rem",
+                  // width: "57rem",
                 }}
               >
                 <div
@@ -333,12 +349,15 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                   }}
                 >
                   <h3>Focused</h3>
-                  <img src={focused} style={{ width: "13rem" }} />A node with
-                  two rings is focused, meaning it will always:
+                  <p style={{ marginBottom: "-1rem" }}>
+                    A node with two rings is focused,
+                    <br /> which means it will always:
+                  </p>
                   <ul>
                     <li>Display its name</li>
                     <li>Display its links</li>
                   </ul>
+                  <img src={focused} style={{ width: "13rem" }} />
                 </div>
 
                 <div
@@ -350,12 +369,15 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                   }}
                 >
                   <h3>Activated</h3>
-                  <img src={activated} style={{ width: "13rem" }} />A node with
-                  a single ring is activated, meaning it will always:
+                  <p style={{ marginBottom: "-1rem" }}>
+                    A node with a single ring is activated, meaning it will
+                    always:
+                  </p>
                   <ul>
                     <li>Display its name</li>
                     <li>Display its links</li>
                   </ul>
+                  <img src={activated} style={{ width: "13rem" }} />
                 </div>
 
                 <div
@@ -366,14 +388,18 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                     width: "18rem",
                   }}
                 >
-                  <h3>none</h3>
+                  <h3>none</h3>{" "}
+                  <p>
+                    Nodes that do not have any rings will not display its name
+                    or links.
+                  </p>
+                  <br />
+                  <br />
+                  {/* <ul style={{ listStyle: "none" }}>
+                    <li>-</li>
+                    <li>-</li>
+                  </ul> */}
                   <img src={none} style={{ width: "13rem" }} />
-                  Nodes that do not have any rings will not display its links or
-                  name:
-                  <ul style={{ listStyle: "none" }}>
-                    <li>-</li>
-                    <li>-</li>
-                  </ul>
                 </div>
               </div>
             </div>
@@ -387,13 +413,10 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
               backgroundColor: "#a8a8a8",
               borderRadius: "10px",
               padding: "1rem",
-              marginTop: "1rem",
               textAlign: "center",
               marginBottom: "1rem",
-              marginLeft: "1rem",
             }}
           >
-            <h2>Tree Depth</h2>
             <div
               style={{
                 display: "flex",
@@ -402,23 +425,27 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
                 justifyContent: "space-evenly",
               }}
             >
+              <h2 style={{ marginBottom: "-0.5rem" }}>Tree Depth</h2>
+
+              <p style={{ textAlign: "center" }}>
+                While a node is in focus{" "}
+                <img
+                  src={focused}
+                  style={{ width: "40px", display: "inline" }}
+                />
+                , press + or - on your keyboard to increase or decrease the
+                node's tree depth.
+                <br />
+                Note: An audio sound will play when you have reached the maximum
+                or minumum tree depth.
+              </p>
               <div>
-                <img src={increase} style={{ width: "40rem" }} />
+                <img
+                  src={increase}
+                  style={{ width: "40rem", marginBottom: "1rem" }}
+                />
               </div>
-              <div>
-                <p style={{ textAlign: "center" }}>
-                  While a node is in focus{" "}
-                  <img
-                    src={focused}
-                    style={{ width: "40px", display: "inline" }}
-                  />{" "}
-                  , press + or - on your keyboard to increase or decrease the
-                  node's tree depth.
-                  <br />
-                  Note: An audio sound will play when you have reached the
-                  maximum or minumum tree depth.
-                </p>
-              </div>
+              <div></div>
             </div>
           </div>
         </div>

@@ -9,7 +9,7 @@ import HelpMenu from "./components/HelpMenu";
 
 function App() {
   const [tabs, setTabs] = useState(3);
-  const [isHelpMenuOpen, setIsHelpMenuOpen] = useState(true);
+  const [isHelpMenuOpen, setIsHelpMenuOpen] = useState(false);
 
   const handleCloseHelpMenu = (event: { key: any; keyCode: any }) => {
     const { key, keyCode } = event;

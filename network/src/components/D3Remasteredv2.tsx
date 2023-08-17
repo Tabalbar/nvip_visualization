@@ -385,7 +385,16 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
             }
           }
         }
-
+        // const element = svg
+        //   .append("g")
+        //   .selectAll("circle2")
+        //   .data(nodes)
+        //   .enter()
+        //   .append("circle")
+        //   .attr("r", 10)
+        //   .attr("fill", "red")
+        //   .attr("cx", d.x)
+        //   .attr("cy", d.y);
         // This if else is the logic to decide how to color the nodes
         if (!found) {
           // Node is not activated, so I want to actiate and focus on it
@@ -810,8 +819,8 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
         style={{
           position: "absolute",
           // width: "300px",
-          right: "1rem",
-          top: "1rem",
+          right: "2rem",
+          top: "2rem",
         }}
       >
         {" "}
