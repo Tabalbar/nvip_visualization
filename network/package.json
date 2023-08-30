@@ -18,7 +18,7 @@
     "material-table": "^2.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "reactflow": "^11.7.2",
+    "reactflow": "^11.7.4",
     "reagraph": "^4.8.3"
   },
   "devDependencies": {
