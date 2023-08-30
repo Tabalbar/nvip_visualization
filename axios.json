@@ -1,0 +1,238 @@
+{
+  "vulns": [
+    {
+      "id": "GHSA-42xw-2xvc-qx8m",
+      "summary": "Denial of Service in axios",
+      "details": "Versions of `axios` prior to 0.18.1 are vulnerable to Denial of Service. If a request exceeds the `maxContentLength` property, the package prints an error but does not stop the request. This may cause high CPU usage and lead to Denial of Service.\n\n\n## Recommendation\n\nUpgrade to 0.18.1 or later.",
+      "aliases": ["CVE-2019-10742"],
+      "modified": "2021-07-27T20:36:18Z",
+      "published": "2019-05-29T18:04:45Z",
+      "database_specific": {
+        "cwe_ids": ["CWE-20", "CWE-755"],
+        "github_reviewed": true,
+        "severity": "HIGH",
+        "github_reviewed_at": "2019-05-14T15:22:47Z",
+        "nvd_published_at": "2019-05-07T19:29:00Z"
+      },
+      "references": [
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2019-10742"
+        },
+        { "type": "WEB", "url": "https://github.com/axios/axios/issues/1098" },
+        { "type": "WEB", "url": "https://github.com/axios/axios/pull/1485" },
+        {
+          "type": "WEB",
+          "url": "https://github.com/axios/axios/commit/acabfbdf00a58bb866c9d070e8a10d1d0dbeb572"
+        },
+        {
+          "type": "WEB",
+          "url": "https://app.snyk.io/vuln/SNYK-JS-AXIOS-174505"
+        },
+        { "type": "WEB", "url": "https://snyk.io/vuln/SNYK-JS-AXIOS-174505" },
+        { "type": "WEB", "url": "https://www.npmjs.com/advisories/880" }
+      ],
+      "affected": [
+        {
+          "package": {
+            "name": "axios",
+            "ecosystem": "npm",
+            "purl": "pkg:npm/axios"
+          },
+          "ranges": [
+            {
+              "type": "SEMVER",
+              "events": [{ "introduced": "0" }, { "fixed": "0.18.1" }]
+            }
+          ],
+          "database_specific": {
+            "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2019/05/GHSA-42xw-2xvc-qx8m/GHSA-42xw-2xvc-qx8m.json",
+            "last_known_affected_version_range": "\u003c= 0.18.0"
+          }
+        }
+      ],
+      "schema_version": "1.4.0",
+      "severity": [
+        {
+          "type": "CVSS_V3",
+          "score": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+        }
+      ]
+    },
+    {
+      "id": "GHSA-4w2v-q235-vp99",
+      "summary": "Axios vulnerable to Server-Side Request Forgery",
+      "details": "Axios NPM package 0.21.0 contains a Server-Side Request Forgery (SSRF) vulnerability where an attacker is able to bypass a proxy by providing a URL that responds with a redirect to a restricted host or IP address.",
+      "aliases": ["CVE-2020-28168"],
+      "modified": "2022-09-14T20:36:52Z",
+      "published": "2021-01-04T20:59:40Z",
+      "database_specific": {
+        "cwe_ids": ["CWE-918"],
+        "github_reviewed": true,
+        "severity": "MODERATE",
+        "github_reviewed_at": "2021-01-04T20:57:20Z",
+        "nvd_published_at": "2020-11-06T20:15:00Z"
+      },
+      "references": [
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2020-28168"
+        },
+        { "type": "WEB", "url": "https://github.com/axios/axios/issues/3369" },
+        {
+          "type": "WEB",
+          "url": "https://github.com/axios/axios/commit/c7329fefc890050edd51e40e469a154d0117fc55"
+        },
+        {
+          "type": "WEB",
+          "url": "https://cert-portal.siemens.com/productcert/pdf/ssa-637483.pdf"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.apache.org/thread.html/r25d53acd06f29244b8a103781b0339c5e7efee9099a4d52f0c230e4a@%3Ccommits.druid.apache.org%3E"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.apache.org/thread.html/r954d80fd18e9dafef6e813963eb7e08c228151c2b6268ecd63b35d1f@%3Ccommits.druid.apache.org%3E"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.apache.org/thread.html/rdfd2901b8b697a3f6e2c9c6ecc688fd90d7f881937affb5144d61d6e@%3Ccommits.druid.apache.org%3E"
+        },
+        { "type": "WEB", "url": "https://snyk.io/vuln/SNYK-JS-AXIOS-1038255" },
+        { "type": "WEB", "url": "https://www.npmjs.com/advisories/1594" },
+        { "type": "WEB", "url": "https://www.npmjs.com/package/axios" }
+      ],
+      "affected": [
+        {
+          "package": {
+            "name": "axios",
+            "ecosystem": "npm",
+            "purl": "pkg:npm/axios"
+          },
+          "ranges": [
+            {
+              "type": "SEMVER",
+              "events": [{ "introduced": "0" }, { "fixed": "0.21.1" }]
+            }
+          ],
+          "database_specific": {
+            "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2021/01/GHSA-4w2v-q235-vp99/GHSA-4w2v-q235-vp99.json"
+          }
+        }
+      ],
+      "schema_version": "1.4.0",
+      "severity": [
+        {
+          "type": "CVSS_V3",
+          "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N"
+        }
+      ]
+    },
+    {
+      "id": "GHSA-cph5-m8f7-6c5x",
+      "summary": "axios Inefficient Regular Expression Complexity vulnerability",
+      "details": "axios before v0.21.2 is vulnerable to Inefficient Regular Expression Complexity.",
+      "aliases": ["CVE-2021-3749"],
+      "modified": "2022-09-14T21:28:32Z",
+      "published": "2021-09-01T18:23:02Z",
+      "database_specific": {
+        "cwe_ids": ["CWE-1333", "CWE-400"],
+        "github_reviewed": true,
+        "severity": "HIGH",
+        "github_reviewed_at": "2021-09-01T18:14:02Z",
+        "nvd_published_at": "2021-08-31T11:15:00Z"
+      },
+      "references": [
+        {
+          "type": "ADVISORY",
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-3749"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/axios/axios/commit/5b457116e31db0e88fede6c428e969e87f290929"
+        },
+        {
+          "type": "WEB",
+          "url": "https://cert-portal.siemens.com/productcert/pdf/ssa-637483.pdf"
+        },
+        { "type": "PACKAGE", "url": "https://github.com/axios/axios" },
+        {
+          "type": "WEB",
+          "url": "https://huntr.dev/bounties/1e8f07fc-c384-4ff9-8498-0690de2e8c31"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.apache.org/thread.html/r075d464dce95cd13c03ff9384658edcccd5ab2983b82bfc72b62bb10@%3Ccommits.druid.apache.org%3E"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.apache.org/thread.html/r216f0fd0a3833856d6a6a1fada488cadba45f447d87010024328ccf2@%3Ccommits.druid.apache.org%3E"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.apache.org/thread.html/r3ae6d2654f92c5851bdb73b35e96b0e4e3da39f28ac7a1b15ae3aab8@%3Ccommits.druid.apache.org%3E"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.apache.org/thread.html/r4bf1b32983f50be00f9752214c1b53738b621be1c2b0dbd68c7f2391@%3Ccommits.druid.apache.org%3E"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.apache.org/thread.html/r7324ecc35b8027a51cb6ed629490fcd3b2d7cf01c424746ed5744bf1@%3Ccommits.druid.apache.org%3E"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.apache.org/thread.html/r74d0b359408fff31f87445261f0ee13bdfcac7d66f6b8e846face321@%3Ccommits.druid.apache.org%3E"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.apache.org/thread.html/ra15d63c54dc6474b29f72ae4324bcb03038758545b3ab800845de7a1@%3Ccommits.druid.apache.org%3E"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.apache.org/thread.html/rc263bfc5b53afcb7e849605478d73f5556eb0c00d1f912084e407289@%3Ccommits.druid.apache.org%3E"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.apache.org/thread.html/rfa094029c959da0f7c8cd7dc9c4e59d21b03457bf0cedf6c93e1bb0a@%3Cdev.druid.apache.org%3E"
+        },
+        {
+          "type": "WEB",
+          "url": "https://lists.apache.org/thread.html/rfc5c478053ff808671aef170f3d9fc9d05cc1fab8fb64431edc66103@%3Ccommits.druid.apache.org%3E"
+        },
+        { "type": "WEB", "url": "https://www.npmjs.com/package/axios" },
+        {
+          "type": "WEB",
+          "url": "https://www.oracle.com/security-alerts/cpujul2022.html"
+        }
+      ],
+      "affected": [
+        {
+          "package": {
+            "name": "axios",
+            "ecosystem": "npm",
+            "purl": "pkg:npm/axios"
+          },
+          "ranges": [
+            {
+              "type": "SEMVER",
+              "events": [{ "introduced": "0" }, { "fixed": "0.21.2" }]
+            }
+          ],
+          "ecosystem_specific": { "affected_functions": ["axios.utils.trim"] },
+          "database_specific": {
+            "source": "https://github.com/github/advisory-database/blob/main/advisories/github-reviewed/2021/09/GHSA-cph5-m8f7-6c5x/GHSA-cph5-m8f7-6c5x.json"
+          }
+        }
+      ],
+      "schema_version": "1.4.0",
+      "severity": [
+        {
+          "type": "CVSS_V3",
+          "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+        }
+      ]
+    }
+  ]
+}

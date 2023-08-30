@@ -95,6 +95,7 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
   const [, setForceRender] = useState(false);
 
   const { clicked, setClicked, points, setPoints } = useContextMenu();
+  const [isLoading, setIsLoading] = useState(true);
   const numberOfLayers = useRef(1);
 
   const width = 2500;
@@ -385,23 +386,52 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
             }
           }
         }
-        // const element = svg
-        //   .append("g")
-        //   .selectAll("circle2")
-        //   .data(nodes)
-        //   .enter()
-        //   .append("circle")
-        //   .attr("r", 10)
-        //   .attr("fill", "red")
-        //   .attr("cx", d.x)
-        //   .attr("cy", d.y);
+
+        // .style("color", "red");
         // This if else is the logic to decide how to color the nodes
         if (!found) {
           // Node is not activated, so I want to actiate and focus on it
           selectedLinks.current.push(linksToFind);
           focusedNode.current = d;
           setReactFocusedNode(d);
+          const inneringImageFocused = svg
+            .selectAll("imageInnerringFocused")
+            .data([d])
+            .enter()
+            .append("image")
+            .attr("xlink:href", innerringFocused)
+            .attr(
+              "width",
+              (d: any) => (d.ingoingSize + innerringImageSize) * 2.5
+            )
+            .attr(
+              "height",
+              (d: any) => (d.ingoingSize + innerringImageSize) * 2.5
+            )
+            .attr("x", d.x - ((d.ingoingSize + innerringImageSize) * 2.5) / 2)
+            .attr("y", d.y - ((d.ingoingSize + innerringImageSize) * 2.5) / 2)
+            .attr("visibility", "hidden")
+            .attr("pointer-events", "none")
+            .attr("user-select", "none")
+            .attr("class", "svgInnerring");
 
+          const outerringImageFocused = svg
+            .selectAll("imageOuterringFocused")
+            .data([d])
+            .enter()
+            .append("image")
+            .attr("xlink:href", outerringFocused)
+            .attr("width", (d: any) => (d.ingoingSize + outerringImageSize) * 4)
+            .attr(
+              "height",
+              (d: any) => (d.ingoingSize + outerringImageSize) * 4
+            )
+            .attr("x", d.x - ((d.ingoingSize + outerringImageSize) * 4) / 2)
+            .attr("y", d.y - ((d.ingoingSize + outerringImageSize) * 4) / 2)
+            .attr("visibility", "hidden")
+            .attr("pointer-events", "none")
+            .attr("user-select", "none")
+            .attr("class", "svgOuterring");
           selectedNodes.current.push(d);
         } else {
           // If node is in focus, I want to unfocus and unactivate it
@@ -411,13 +441,13 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
               .filter((d: any) => {
                 return d.name === focusedNode.current.name;
               })
-              .attr("visibility", "hidden");
+              .remove();
             d3.select("body")
               .selectAll(".svgInnerring")
               .filter((d: any) => {
                 return d.name === focusedNode.current.name;
               })
-              .attr("visibility", "hidden");
+              .remove();
             focusedNode.current = null;
             setReactFocusedNode(null);
 
@@ -446,32 +476,32 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
         numberOfLayers.current = d.numberOfLayers;
       });
 
-    const inneringImageFocused = svg
-      .selectAll("imageInnerringFocused")
-      .data(nodes)
-      .enter()
-      .append("image")
-      .attr("xlink:href", innerringFocused)
-      .attr("width", (d: any) => (d.ingoingSize + innerringImageSize) * 2.5)
-      .attr("height", (d: any) => (d.ingoingSize + innerringImageSize) * 2.5)
-      .attr("visibility", "hidden")
-      .attr("pointer-events", "none")
-      .attr("user-select", "none")
-      .attr("class", "svgInnerring")
-      .style("color", "red");
+    // const inneringImageFocused = svg
+    //   .selectAll("imageInnerringFocused")
+    //   .data(nodes)
+    //   .enter()
+    //   .append("image")
+    //   .attr("xlink:href", innerringFocused)
+    //   .attr("width", (d: any) => (d.ingoingSize + innerringImageSize) * 2.5)
+    //   .attr("height", (d: any) => (d.ingoingSize + innerringImageSize) * 2.5)
+    //   .attr("visibility", "hidden")
+    //   .attr("pointer-events", "none")
+    //   .attr("user-select", "none")
+    //   .attr("class", "svgInnerring")
+    //   .style("color", "red");
 
-    const outerringImageFocused = svg
-      .selectAll("imageOuterringFocused")
-      .data(nodes)
-      .enter()
-      .append("image")
-      .attr("xlink:href", outerringFocused)
-      .attr("width", (d: any) => (d.ingoingSize + outerringImageSize) * 4)
-      .attr("height", (d: any) => (d.ingoingSize + outerringImageSize) * 4)
-      .attr("visibility", "hidden")
-      .attr("pointer-events", "none")
-      .attr("user-select", "none")
-      .attr("class", "svgOuterring");
+    // const outerringImageFocused = svg
+    //   .selectAll("imageOuterringFocused")
+    //   .data(nodes)
+    //   .enter()
+    //   .append("image")
+    //   .attr("xlink:href", outerringFocused)
+    //   .attr("width", (d: any) => (d.ingoingSize + outerringImageSize) * 4)
+    //   .attr("height", (d: any) => (d.ingoingSize + outerringImageSize) * 4)
+    //   .attr("visibility", "hidden")
+    //   .attr("pointer-events", "none")
+    //   .attr("user-select", "none")
+    //   .attr("class", "svgOuterring");
 
     const text = svg
       .append("g")
@@ -522,25 +552,10 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
         (d: any) =>
           `translate(${d.x + d.ingoingSize * 3},${d.y + d.ingoingSize * -3})`
       );
-
-      inneringImageFocused.attr(
-        "x",
-        (d: any) => d.x - ((d.ingoingSize + innerringImageSize) * 2.5) / 2
-      );
-      inneringImageFocused.attr(
-        "y",
-        (d: any) => d.y - ((d.ingoingSize + innerringImageSize) * 2.5) / 2
-      );
-
-      outerringImageFocused.attr(
-        "x",
-        (d: any) => d.x - ((d.ingoingSize + outerringImageSize) * 4) / 2
-      );
-      outerringImageFocused.attr(
-        "y",
-        (d: any) => d.y - ((d.ingoingSize + outerringImageSize) * 4) / 2
-      );
     }
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 8000);
   }, [nodes, links, width, height]);
 
   const increaseNumberOfLayers = () => {
@@ -815,6 +830,32 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
       //   console.log("Right Click", e.pageX, e.pageY);
       // }}
     >
+      {isLoading ? (
+        <div
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            opacity: 0.5,
+            backgroundColor: "gray",
+          }}
+        >
+          {/* <div className="center">Please Wait</div> */}
+          <div className="center">
+            <div className="wave"></div>
+            <div className="wave"></div>
+            <div className="wave"></div>
+            <div className="wave"></div>
+            <div className="wave"></div>
+            <div className="wave"></div>
+            <div className="wave"></div>
+            <div className="wave"></div>
+            <div className="wave"></div>
+            <div className="wave"></div>
+          </div>
+        </div>
+      ) : null}
+
       <div
         style={{
           position: "absolute",
