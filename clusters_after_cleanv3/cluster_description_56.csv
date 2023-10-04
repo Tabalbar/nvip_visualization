@@ -1,0 +1,3 @@
+,label,description
+0,56,"sonatype-2017-0348 - xerces:xercesImpl - Denial of Service (DoS) The software contains multiple threads or executable segments that are waiting for each other to release a necessary lock, resulting in deadlock."
+1,56,"sonatype-2017-0348 - xerces:xercesImpl - Denial of Service (DoS) The software contains multiple threads or executable segments that are waiting for each other to release a necessary lock, resulting in deadlock."

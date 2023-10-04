@@ -1,0 +1,1097 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.3",
+  "creationInfo": {
+    "created": "2023-09-14T23:52:04Z",
+    "creators": ["Tool: GitHub.com-Dependency-Graph"]
+  },
+  "name": "com.github.jquery/jquery",
+  "dataLicense": "CC0-1.0",
+  "documentDescribes": ["SPDXRef-com.github.jquery-jquery"],
+  "documentNamespace": "https://github.com/jquery/jquery/dependency_graph/sbom-e2da9f3276021bb5",
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-com.github.jquery-jquery",
+      "name": "com.github.jquery/jquery",
+      "versionInfo": "",
+      "downloadLocation": "git+https://github.com/jquery/jquery",
+      "licenseDeclared": "MIT",
+      "filesAnalyzed": false,
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:github/jquery/jquery"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-babel-core-7.10.5",
+      "name": "npm:@babel/core",
+      "versionInfo": "7.10.5",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/%40babel/core@7.10.5",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-babel-plugin-transform-for-of-7.10.4",
+      "name": "npm:@babel/plugin-transform-for-of",
+      "versionInfo": "7.10.4",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/%40babel/plugin-transform-for-of@7.10.4",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-swc-core-1.3.66",
+      "name": "npm:@swc/core",
+      "versionInfo": "1.3.66",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "Apache-2.0",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/%40swc/core@1.3.66",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-bootstrap-5.3.0",
+      "name": "npm:bootstrap",
+      "versionInfo": "5.3.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/bootstrap@5.3.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-colors-1.4.0",
+      "name": "npm:colors",
+      "versionInfo": "1.4.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/colors@1.4.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-commitplease-3.2.0",
+      "name": "npm:commitplease",
+      "versionInfo": "3.2.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/commitplease@3.2.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-core-js-bundle-3.6.5",
+      "name": "npm:core-js-bundle",
+      "versionInfo": "3.6.5",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/core-js-bundle@3.6.5",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-eslint-config-jquery-3.0.0",
+      "name": "npm:eslint-config-jquery",
+      "versionInfo": "3.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/eslint-config-jquery@3.0.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-eslint-plugin-import-2.25.2",
+      "name": "npm:eslint-plugin-import",
+      "versionInfo": "2.25.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/eslint-plugin-import@2.25.2",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-grunt-1.5.3",
+      "name": "npm:grunt",
+      "versionInfo": "1.5.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/grunt@1.5.3",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-grunt-babel-8.0.0",
+      "name": "npm:grunt-babel",
+      "versionInfo": "8.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/grunt-babel@8.0.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-grunt-cli-1.4.3",
+      "name": "npm:grunt-cli",
+      "versionInfo": "1.4.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/grunt-cli@1.4.3",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-grunt-compare-size-0.4.2",
+      "name": "npm:grunt-compare-size",
+      "versionInfo": "0.4.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/grunt-compare-size@0.4.2",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-grunt-contrib-watch-1.1.0",
+      "name": "npm:grunt-contrib-watch",
+      "versionInfo": "1.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/grunt-contrib-watch@1.1.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-grunt-eslint-24.0.0",
+      "name": "npm:grunt-eslint",
+      "versionInfo": "24.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/grunt-eslint@24.0.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-grunt-git-authors-3.2.0",
+      "name": "npm:grunt-git-authors",
+      "versionInfo": "3.2.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/grunt-git-authors@3.2.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-grunt-jsonlint-2.1.2",
+      "name": "npm:grunt-jsonlint",
+      "versionInfo": "2.1.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/grunt-jsonlint@2.1.2",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-grunt-karma-4.0.2",
+      "name": "npm:grunt-karma",
+      "versionInfo": "4.0.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/grunt-karma@4.0.2",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-grunt-newer-1.3.0",
+      "name": "npm:grunt-newer",
+      "versionInfo": "1.3.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/grunt-newer@1.3.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-grunt-npmcopy-0.2.0",
+      "name": "npm:grunt-npmcopy",
+      "versionInfo": "0.2.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/grunt-npmcopy@0.2.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-gzip-js-0.3.2",
+      "name": "npm:gzip-js",
+      "versionInfo": "0.3.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "GPL-2.0-only",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/gzip-js@0.3.2",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-husky-4.2.5",
+      "name": "npm:husky",
+      "versionInfo": "4.2.5",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/husky@4.2.5",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-jsdom-19.0.0",
+      "name": "npm:jsdom",
+      "versionInfo": "19.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/jsdom@19.0.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-karma-6.4.1",
+      "name": "npm:karma",
+      "versionInfo": "6.4.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/karma@6.4.1",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-karma-browserstack-launcher-1.6.0",
+      "name": "npm:karma-browserstack-launcher",
+      "versionInfo": "1.6.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/karma-browserstack-launcher@1.6.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-karma-chrome-launcher-3.1.1",
+      "name": "npm:karma-chrome-launcher",
+      "versionInfo": "3.1.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/karma-chrome-launcher@3.1.1",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-karma-firefox-launcher-2.1.2",
+      "name": "npm:karma-firefox-launcher",
+      "versionInfo": "2.1.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/karma-firefox-launcher@2.1.2",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-karma-ie-launcher-1.0.0",
+      "name": "npm:karma-ie-launcher",
+      "versionInfo": "1.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/karma-ie-launcher@1.0.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-karma-jsdom-launcher-12.0.0",
+      "name": "npm:karma-jsdom-launcher",
+      "versionInfo": "12.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/karma-jsdom-launcher@12.0.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-karma-qunit-4.1.2",
+      "name": "npm:karma-qunit",
+      "versionInfo": "4.1.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/karma-qunit@4.1.2",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-karma-webkit-launcher-2.1.0",
+      "name": "npm:karma-webkit-launcher",
+      "versionInfo": "2.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "Apache-2.0",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/karma-webkit-launcher@2.1.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-load-grunt-tasks-5.1.0",
+      "name": "npm:load-grunt-tasks",
+      "versionInfo": "5.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/load-grunt-tasks@5.1.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-multiparty-4.2.3",
+      "name": "npm:multiparty",
+      "versionInfo": "4.2.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/multiparty@4.2.3",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-native-promise-only-0.8.1",
+      "name": "npm:native-promise-only",
+      "versionInfo": "0.8.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/native-promise-only@0.8.1",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-playwright-webkit-1.30.0",
+      "name": "npm:playwright-webkit",
+      "versionInfo": "1.30.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "Apache-2.0",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/playwright-webkit@1.30.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-promises-aplus-tests-2.1.2",
+      "name": "npm:promises-aplus-tests",
+      "versionInfo": "2.1.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "WTFPL",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/promises-aplus-tests@2.1.2",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-q-1.5.1",
+      "name": "npm:q",
+      "versionInfo": "1.5.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/q@1.5.1",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-qunit-2.10.1",
+      "name": "npm:qunit",
+      "versionInfo": "2.10.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/qunit@2.10.1",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-raw-body-2.4.1",
+      "name": "npm:raw-body",
+      "versionInfo": "2.4.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/raw-body@2.4.1",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-requirejs-2.3.6",
+      "name": "npm:requirejs",
+      "versionInfo": "2.3.6",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/requirejs@2.3.6",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-rimraf-3.0.2",
+      "name": "npm:rimraf",
+      "versionInfo": "3.0.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "ISC",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/rimraf@3.0.2",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-rollup-2.21.0",
+      "name": "npm:rollup",
+      "versionInfo": "2.21.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/rollup@2.21.0",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-sinon-7.3.1",
+      "name": "npm:sinon",
+      "versionInfo": "7.3.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "BSD-3-Clause",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/sinon@7.3.1",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-strip-json-comments-3.1.1",
+      "name": "npm:strip-json-comments",
+      "versionInfo": "3.1.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/strip-json-comments@3.1.1",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-npm-testswarm-1.1.2",
+      "name": "npm:testswarm",
+      "versionInfo": "1.1.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:npm/testswarm@1.1.2",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-actions-actions-checkout-f43a0e5ff2bd294095638e18286ca9a3d1956744",
+      "name": "actions:actions/checkout",
+      "versionInfo": "f43a0e5ff2bd294095638e18286ca9a3d1956744",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:githubactions/actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-actions-github-codeql-action-analyze-00e563ead9f72a8461b24876bee2d0c2e8bd2ee8",
+      "name": "actions:github/codeql-action/analyze",
+      "versionInfo": "00e563ead9f72a8461b24876bee2d0c2e8bd2ee8",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:githubactions/github/codeql-action/analyze@00e563ead9f72a8461b24876bee2d0c2e8bd2ee8",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-actions-github-codeql-action-autobuild-00e563ead9f72a8461b24876bee2d0c2e8bd2ee8",
+      "name": "actions:github/codeql-action/autobuild",
+      "versionInfo": "00e563ead9f72a8461b24876bee2d0c2e8bd2ee8",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:githubactions/github/codeql-action/autobuild@00e563ead9f72a8461b24876bee2d0c2e8bd2ee8",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-actions-github-codeql-action-init-00e563ead9f72a8461b24876bee2d0c2e8bd2ee8",
+      "name": "actions:github/codeql-action/init",
+      "versionInfo": "00e563ead9f72a8461b24876bee2d0c2e8bd2ee8",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:githubactions/github/codeql-action/init@00e563ead9f72a8461b24876bee2d0c2e8bd2ee8",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-actions-actions-cache-88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8",
+      "name": "actions:actions/cache",
+      "versionInfo": "88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:githubactions/actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8",
+          "referenceType": "purl"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-actions-actions-setup-node-5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d",
+      "name": "actions:actions/setup-node",
+      "versionInfo": "5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:githubactions/actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d",
+          "referenceType": "purl"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-babel-core-7.10.5"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-babel-plugin-transform-for-of-7.10.4"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-swc-core-1.3.66"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-bootstrap-5.3.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-colors-1.4.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-commitplease-3.2.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-core-js-bundle-3.6.5"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-eslint-config-jquery-3.0.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-eslint-plugin-import-2.25.2"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-grunt-1.5.3"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-grunt-babel-8.0.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-grunt-cli-1.4.3"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-grunt-compare-size-0.4.2"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-grunt-contrib-watch-1.1.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-grunt-eslint-24.0.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-grunt-git-authors-3.2.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-grunt-jsonlint-2.1.2"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-grunt-karma-4.0.2"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-grunt-newer-1.3.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-grunt-npmcopy-0.2.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-gzip-js-0.3.2"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-husky-4.2.5"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-jsdom-19.0.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-karma-6.4.1"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-karma-browserstack-launcher-1.6.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-karma-chrome-launcher-3.1.1"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-karma-firefox-launcher-2.1.2"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-karma-ie-launcher-1.0.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-karma-jsdom-launcher-12.0.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-karma-qunit-4.1.2"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-karma-webkit-launcher-2.1.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-load-grunt-tasks-5.1.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-multiparty-4.2.3"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-native-promise-only-0.8.1"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-playwright-webkit-1.30.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-promises-aplus-tests-2.1.2"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-q-1.5.1"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-qunit-2.10.1"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-raw-body-2.4.1"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-requirejs-2.3.6"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-rimraf-3.0.2"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-rollup-2.21.0"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-sinon-7.3.1"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-strip-json-comments-3.1.1"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-npm-testswarm-1.1.2"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-actions-actions-checkout-f43a0e5ff2bd294095638e18286ca9a3d1956744"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-actions-github-codeql-action-analyze-00e563ead9f72a8461b24876bee2d0c2e8bd2ee8"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-actions-github-codeql-action-autobuild-00e563ead9f72a8461b24876bee2d0c2e8bd2ee8"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-actions-github-codeql-action-init-00e563ead9f72a8461b24876bee2d0c2e8bd2ee8"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-actions-actions-cache-88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8"
+    },
+    {
+      "relationshipType": "DEPENDS_ON",
+      "spdxElementId": "SPDXRef-com.github.jquery-jquery",
+      "relatedSpdxElement": "SPDXRef-actions-actions-setup-node-5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d"
+    }
+  ]
+}

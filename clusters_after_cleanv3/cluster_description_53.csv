@@ -1,0 +1,3 @@
+,label,description
+0,53,"Versions of the package net.sourceforge.htmlunit:htmlunit from 0 and before 3.0.0 are vulnerable to Remote Code Execution (RCE) via XSTL, when browsing the attacker’s webpage."
+1,53,"Versions of the package net.sourceforge.htmlunit:htmlunit from 0 and before 3.0.0 are vulnerable to Remote Code Execution (RCE) via XSTL, when browsing the attacker’s webpage."

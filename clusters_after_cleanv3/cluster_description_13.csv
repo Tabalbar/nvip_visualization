@@ -1,0 +1,14 @@
+,label,description
+0,13,keycloak-server-spi-private - Session Fixation
+1,13,A flaw was found in Keycloak. This flaw allows impersonation and lockout due to the email trust not being handled correctly in Keycloak. An attacker can shadow other users with the same email and lockout or impersonate them.
+2,13,A flaw was found in Keycloak 7.0.1. A logged in user can do an account email enumeration attack.
+3,13,"A flaw was found in Keycloak 12.0.0 where re-authentication does not occur while updating the password. This flaw allows an attacker to take over an account if they can obtain temporary, physical access to a user’s browser. The highest threat from this vulnerability is to confidentiality, integrity, as well as system availability."
+4,13,A flaw was found in keycloak where keycloak may fail to logout user session if the logout request comes from external SAML identity provider and Principal Type is set to Attribute [Name].
+5,13,A flaw was found in keycloak where a brute force attack is possible even when the permanent lockout feature is enabled. This is due to a wrong error message displayed when wrong credentials are entered. The highest threat from this vulnerability is to confidentiality.
+6,13,A flaw was found in Keycloak. This vulnerability allows anyone to register a new security device or key when there is not a device already registered for any user by using the WebAuthn password-less login flow.
+7,13,"A flaw was found in keycloak, where the default ECP binding flow allows other authentication flows to be bypassed. By exploiting this behavior, an attacker can bypass the MFA authentication by sending a SOAP request with an AuthnRequest and Authorization header with the user's credentials. The highest threat from this vulnerability is to confidentiality and integrity."
+8,13,A flaw was found in Keycloak in the execute-actions-email endpoint. This issue allows arbitrary HTML to be injected into emails sent to Keycloak users and can be misused to perform phishing or other attacks against users.
+9,13,keycloak-server-spi-private - Session Fixation
+10,13,"A flaw was found in Keycloak, where it did not properly check client tokens for possible revocation in its client credential flow. This flaw allows an attacker to access or modify potentially sensitive information."
+11,13,keycloak-services - Incorrect Implementation of Authentication Algorithm Sonatype's research suggests that this CVE's details differ from those defined at NVD. See https://ossindex.sonatype.org/vulnerability/CVE-2023-0264 for details
+12,13,A flaw was found in keycloak-model-infinispan in keycloak versions before 14.0.0 where authenticationSessions map in RootAuthenticationSessionEntity grows boundlessly which could lead to a DoS attack.

@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
-import sbom_data from "../assets/sbom_dep2.json";
+import sbom_data from "../assets/sbom5.json";
 import SideMenu from "./SideMenu";
 import innerringFocused from "../assets/innerring_focused.svg";
 import outerringFocused from "../assets/outerring_focused.svg";
@@ -111,6 +111,7 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
     const components = sbom_data.components;
     const vulnerabilities = sbom_data.vulnerabilities;
     const dependencies = sbom_data.dependencies;
+    console.log(dependencies);
     let color = "";
     let dimmedColor = "";
 
@@ -150,7 +151,7 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
       const isVulnerableByDependency = checkIfVulnerableByDependency(component);
 
       // Setting the sizes of the nodes
-      for (let j = 0; j < dependencies.length; j++) {
+      for (let j = 0; j < dependencies.length / 2; j++) {
         if (dependencies[j]["ref"] === component["bom-ref"]) {
           ingoingLinks = dependencies[j]["dependsOn"].length;
           // Ingoing
@@ -292,12 +293,12 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
                   : // d.vulnerabilityInfo.ratings[0].score * 20
                     300
                 : d.isVulnerableByDependency
-                ? 400
-                : 700,
+                ? 250
+                : 500,
             width / 2,
             height / 2
           )
-          .strength(2.5)
+          .strength(3.5)
       )
       .on("tick", ticked)
       .force(
@@ -305,8 +306,8 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
         d3
           .forceLink(links)
           .id((d: any) => d.name)
-          .distance(10)
-          .strength(0.2) // Make the blue links longer
+          .distance(100)
+          .strength(0.5) // Make the blue links longer
         // .strength((link: any) => {
         //   const areTheSameTypes =
         //     (link.source.vulnerabilityInfo &&
@@ -358,15 +359,21 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
         return d.ingoingSize;
       })
       .attr("fill", (d: any, i) => d.color)
-      .attr("stroke", "black")
-      .attr("stroke-width", 0.5)
+      .attr("stroke", (d: any, i) => {
+        if (d.info.directImport) {
+          return "#3558cc";
+        } else {
+          return "black";
+        }
+      })
+      .attr("stroke-width", 3)
       .on("mouseenter", function (event, d: any) {
         const linksToFind = findAssociatedLinks(d);
         turnOnTheseLinksWhenHovered(linksToFind);
-        turnOnTextForNode(d);
+        turnOnTextForNode(d, svg);
         setReactFocusedNode(d);
       })
-      .on("mouseout", (e, d: any) => {
+      .on("mouseout", (e, unClicked: any) => {
         resetLinks();
         turnOffTextForNodesNotInSelectedNodes();
 
@@ -394,7 +401,7 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
           selectedLinks.current.push(linksToFind);
           focusedNode.current = d;
           setReactFocusedNode(d);
-          const inneringImageFocused = svg
+          svg
             .selectAll("imageInnerringFocused")
             .data([d])
             .enter()
@@ -415,7 +422,7 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
             .attr("user-select", "none")
             .attr("class", "svgInnerring");
 
-          const outerringImageFocused = svg
+          svg
             .selectAll("imageOuterringFocused")
             .data([d])
             .enter()
@@ -432,6 +439,7 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
             .attr("pointer-events", "none")
             .attr("user-select", "none")
             .attr("class", "svgOuterring");
+
           selectedNodes.current.push(d);
         } else {
           // If node is in focus, I want to unfocus and unactivate it
@@ -470,6 +478,7 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
             setReactFocusedNode(d);
           }
         }
+        console.log(selectedNodes.current);
 
         resolveActiveAndFocusedRect();
 
@@ -503,23 +512,23 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
     //   .attr("user-select", "none")
     //   .attr("class", "svgOuterring");
 
-    const text = svg
-      .append("g")
-      .attr("class", "labels")
-      .selectAll("text")
-      .data(nodes)
-      .enter()
-      .append("text")
-      .attr("text-anchor", "middle")
-      .text((d: any) => d.info.name)
-      .attr("fill", "white")
-      .attr("user-select", "none")
-      .attr("pointer-events", "none")
-      .attr("sroke-width", "22")
-      .attr("stroke", "black")
-      .attr("paint-order", "stroke")
-      .attr("filter", "drop-shadow(0px 0px 20px rgb(0 230 230))")
-      .attr("font-size", 0);
+    // const text = svg
+    //   .append("g")
+    //   .attr("class", "labels")
+    //   .selectAll("text")
+    //   .data(nodes)
+    //   .enter()
+    //   .append("text")
+    //   .attr("text-anchor", "middle")
+    //   .text((d: any) => d.info.name)
+    //   .attr("fill", "white")
+    //   .attr("user-select", "none")
+    //   .attr("pointer-events", "none")
+    //   .attr("sroke-width", "22")
+    //   .attr("stroke", "black")
+    //   .attr("paint-order", "stroke")
+    //   .attr("filter", "drop-shadow(0px 0px 20px rgb(0 230 230))")
+    //   .attr("font-size", 0);
 
     const line: any = svg
       .append("g")
@@ -547,11 +556,11 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
         .attr("y2", (d: any) => d.y + d.ingoingSize * -3);
 
       node.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
-      text.attr(
-        "transform",
-        (d: any) =>
-          `translate(${d.x + d.ingoingSize * 3},${d.y + d.ingoingSize * -3})`
-      );
+      // text.attr(
+      //   "transform",
+      //   (d: any) =>
+      //     `translate(${d.x + d.ingoingSize * 3},${d.y + d.ingoingSize * -3})`
+      // );
     }
     setTimeout(() => {
       setIsLoading(false);
@@ -614,7 +623,7 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
         }
         return true;
       })
-      .attr("font-size", 0);
+      .remove();
   };
 
   const resolveActiveAndFocusedRect = () => {
@@ -649,11 +658,9 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
       })
       .attr("stroke-width", 2);
 
-    d3.selectAll("text")
-      .filter((d: any) => {
-        return selectedNodes.current.find((node: any) => node.name === d.name);
-      })
-      .attr("font-size", 20 / zoomRef.current);
+    // for (let i = 0; i < selectedNodes.current.length; i++) {
+    //   turnOnTextForNode(selectedNodes.current[i], d3.select(svgRef.current));
+    // }
   };
 
   const decreaseNumberOfLayers = () => {
@@ -721,17 +728,36 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
     return tmpAssociatedLinks;
   }
 
-  const turnOnTextForNode = (node: any) => {
+  const turnOnTextForNode = (node: any, svg: any) => {
+    for (let i = 0; i < selectedNodes.current.length; i++) {
+      if (selectedNodes.current[i].name === node.name) {
+        return;
+      }
+    }
     d3.select("body")
       .selectAll(".labelLine")
       .filter((l: any) => {
         return l.name === node.name;
       })
       .attr("stroke-width", 2);
-    d3.selectAll("text")
-      .filter((d: any) => {
-        return d.name === node.name;
-      })
+    svg
+      .append("g")
+      .attr("class", "labels")
+      .selectAll("text")
+      .data([node])
+      .enter()
+      .append("text")
+      .attr("text-anchor", "middle")
+      .text((d: any) => d.info.name)
+      .attr("fill", "white")
+      .attr("x", node.x + node.ingoingSize * 4)
+      .attr("y", node.y + node.ingoingSize * -4)
+      .attr("user-select", "none")
+      .attr("pointer-events", "none")
+      .attr("sroke-width", "22")
+      .attr("stroke", "black")
+      .attr("paint-order", "stroke")
+      .attr("filter", "drop-shadow(0px 0px 20px rgb(0 230 230))")
       .attr("font-size", 20 / zoomRef.current);
   };
 
@@ -830,32 +856,6 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
       //   console.log("Right Click", e.pageX, e.pageY);
       // }}
     >
-      {isLoading ? (
-        <div
-          style={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            opacity: 0.5,
-            backgroundColor: "gray",
-          }}
-        >
-          {/* <div className="center">Please Wait</div> */}
-          <div className="center">
-            <div className="wave"></div>
-            <div className="wave"></div>
-            <div className="wave"></div>
-            <div className="wave"></div>
-            <div className="wave"></div>
-            <div className="wave"></div>
-            <div className="wave"></div>
-            <div className="wave"></div>
-            <div className="wave"></div>
-            <div className="wave"></div>
-          </div>
-        </div>
-      ) : null}
-
       <div
         style={{
           position: "absolute",
@@ -934,3 +934,29 @@ const ContextMenu = (props: { top: number; left: number }) => {
     </div>
   );
 };
+
+// {isLoading ? (
+//   <div
+//     style={{
+//       position: "absolute",
+//       width: "100%",
+//       height: "100%",
+//       opacity: 0.5,
+//       backgroundColor: "gray",
+//     }}
+//   >
+//     {/* <div className="center">Please Wait</div> */}
+//     <div className="center">
+//       <div className="wave"></div>
+//       <div className="wave"></div>
+//       <div className="wave"></div>
+//       <div className="wave"></div>
+//       <div className="wave"></div>
+//       <div className="wave"></div>
+//       <div className="wave"></div>
+//       <div className="wave"></div>
+//       <div className="wave"></div>
+//       <div className="wave"></div>
+//     </div>
+//   </div>
+// ) : null}
