@@ -10,14 +10,22 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.1",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
     "ag-grid-community": "^30.0.6",
     "ag-grid-react": "^30.0.6",
+    "cytoscape": "^3.26.0",
     "d3": "^7.8.5",
+    "framer-motion": "^10.16.4",
     "material-table": "^2.0.5",
     "react": "^18.2.0",
+    "react-cytoscapejs": "^2.0.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.11.0",
+    "react-tooltip": "^5.21.5",
     "reactflow": "^11.7.2",
     "reagraph": "^4.8.3"
   },

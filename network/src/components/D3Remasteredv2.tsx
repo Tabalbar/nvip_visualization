@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
-import sbom_data from "../assets/sbom5.json";
 import SideMenu from "./SideMenu";
 import innerringFocused from "../assets/innerring_focused.svg";
 import outerringFocused from "../assets/outerring_focused.svg";
@@ -8,8 +7,11 @@ import outerringActive from "../assets/outerring_active.svg";
 import useContextMenu from "../hooks/useContextMenu";
 import "../App.css";
 import error1 from "../assets/error5.mp3";
+import { IoMdExit } from "react-icons/io";
 
 import * as d3 from "d3";
+import SelectedNode from "./SelectedNode";
+import { Button } from "@chakra-ui/react";
 
 // Colors without dim
 export const isVulnerableByDependencyColor = "#CDC832";
@@ -29,7 +31,7 @@ const dimmedVulnerabilityColorGrad2 = [145, 137, 145] as [
 
 const rectWidth = 4;
 
-const checkIfVulnerableByDependency = (node: any) => {
+const checkIfVulnerableByDependency = (node: any, sbom_data: any) => {
   const dependencies = sbom_data.dependencies;
   let dependenciesToSearch: any = [];
   const nodeInQuestion = dependencies.find((c) => c.ref === node["bom-ref"]);
@@ -77,7 +79,11 @@ function rgbToHex(r: number, g: number, b: number): string {
   return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
-const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
+const D3Remastered = (props: {
+  setIsHelpMenuOpen: any;
+  sbom_data: any;
+  setIsSBOMLoaded: (state: boolean) => void;
+}) => {
   const [nodes, setNodes] = useState<any>([]);
   const [links, setLinks] = useState<any>([]);
 
@@ -92,6 +98,8 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
   const selectedLinks = useRef<any>([]);
   const selectedNodes = useRef<any>([]);
 
+  const [reactSelectedLinks, setReactSelectedLinks] = useState([]);
+
   const [, setForceRender] = useState(false);
 
   const { clicked, setClicked, points, setPoints } = useContextMenu();
@@ -105,12 +113,24 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
 
   const [isSizedByIngoing, setIsSizedByIngoing] = useState(true);
 
+  const handleLeave = () => {
+    // props.setIsSBOMLoaded(false);
+    //detroy d3 network graph
+    // simulation.current.stop();
+    // simulation.current.restart();
+    // simulation.current.alpha(1);
+    simulation.current.stop();
+    d3.select("body").selectAll("svg").remove();
+    props.setIsSBOMLoaded(false);
+  };
+
   useEffect(() => {
     const tmpNodes: any = [];
     const tmpLinks: any = [];
-    const components = sbom_data.components;
-    const vulnerabilities = sbom_data.vulnerabilities;
-    const dependencies = sbom_data.dependencies;
+    console.log(props.sbom_data);
+    const components = props.sbom_data.components;
+    const vulnerabilities = props.sbom_data.vulnerabilities;
+    const dependencies = props.sbom_data.dependencies;
     console.log(dependencies);
     let color = "";
     let dimmedColor = "";
@@ -134,9 +154,9 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
 
       // If the library is a vulnerability, grab the vulnerability info
       // Else is undefined
-      let vulnerabilityInfo: any = vulnerabilities.find((vuln) =>
+      const vulnerabilityInfo: any = vulnerabilities.find((vuln) =>
         vuln.affects.find(
-          (affect) => affect["ref"] === sbom_data.components[i]["bom-ref"]
+          (affect) => affect["ref"] === props.sbom_data.components[i]["bom-ref"]
         )
       );
       if (vulnerabilityInfo) {
@@ -148,7 +168,10 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
         }
       }
 
-      const isVulnerableByDependency = checkIfVulnerableByDependency(component);
+      const isVulnerableByDependency = checkIfVulnerableByDependency(
+        component,
+        props.sbom_data
+      );
 
       // Setting the sizes of the nodes
       for (let j = 0; j < dependencies.length / 2; j++) {
@@ -381,6 +404,8 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
       })
       .on("click", (e, d: any) => {
         const linksToFind = findAssociatedLinks(d);
+        setReactSelectedLinks(linksToFind);
+
         let found = false;
         for (let i = 0; i < selectedLinks.current.length; i++) {
           if (
@@ -393,12 +418,12 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
             }
           }
         }
-
         // .style("color", "red");
         // This if else is the logic to decide how to color the nodes
         if (!found) {
           // Node is not activated, so I want to actiate and focus on it
           selectedLinks.current.push(linksToFind);
+
           focusedNode.current = d;
           setReactFocusedNode(d);
           svg
@@ -478,7 +503,6 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
             setReactFocusedNode(d);
           }
         }
-        console.log(selectedNodes.current);
 
         resolveActiveAndFocusedRect();
 
@@ -586,6 +610,7 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
       audio.play();
     }
     selectedLinks.current.push(links);
+    setReactSelectedLinks(selectedLinks.current);
     setForceRender((prev) => !prev);
     resetLinks();
   };
@@ -682,6 +707,7 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
 
     const links = findAssociatedLinks(focusedNode.current);
     selectedLinks.current.push(links);
+    setReactSelectedLinks(selectedLinks.current);
     setForceRender((prev) => !prev);
 
     resetLinks();
@@ -864,15 +890,28 @@ const D3Remastered = (props: { setIsHelpMenuOpen: any }) => {
           top: "2rem",
         }}
       >
-        {" "}
-        <button
-          style={{ backgroundColor: "#23A9DC", boxShadow: "5px 5px black" }}
+        <Button
+          backgroundColor={"#23A9DC"}
+          boxShadow={"5px 5px black"}
           onClick={() => props.setIsHelpMenuOpen(true)}
+          mr="1rem"
         >
-          Help Menu
-        </button>
+          ?
+        </Button>
+        <Button
+          onClick={handleLeave}
+          backgroundColor={"rgb(220,40,110)"}
+          boxShadow={"5px 5px black"}
+        >
+          <IoMdExit />
+        </Button>
       </div>
       <audio src={error1} id="error1"></audio>
+
+      <SelectedNode
+        nodeInfo={reactFocusedNode}
+        selectedLinks={reactSelectedLinks}
+      />
 
       <ZoomableSVG width={width} height={height} zoom={zoom} setZoom={setZoom}>
         <svg ref={svgRef} width={width} height={height}></svg>

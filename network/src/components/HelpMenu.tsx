@@ -14,6 +14,7 @@ import focused from "../assets/focused.png";
 import activated from "../assets/activated.png";
 import none from "../assets/none.png";
 import increase from "../assets/increase.gif";
+import { Button } from "@chakra-ui/react";
 
 const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
   return (
@@ -43,7 +44,7 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
             position: "relative",
           }}
         >
-          <button
+          <Button
             style={{
               position: "absolute",
               top: "1rem",
@@ -55,7 +56,7 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
             onClick={() => props.setIsHelpMenuOpen(false)}
           >
             X
-          </button>
+          </Button>
           <div
             style={{
               display: "flex",
@@ -65,6 +66,8 @@ const HelpMenu = (props: { setIsHelpMenuOpen: any }) => {
               transform: "translateY(-20px)",
               marginRight: "-20px",
               marginLeft: "-20px",
+              paddingTop: "1rem",
+              paddingBottom: "1rem",
             }}
           >
             <h1>Help Menu</h1>
