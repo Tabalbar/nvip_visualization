@@ -2,8 +2,6 @@ import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
 import SideMenu from "./SideMenu";
 import innerringFocused from "../assets/innerring_focused.svg";
 import outerringFocused from "../assets/outerring_focused.svg";
-import innerringActive from "../assets/innerring_active.svg";
-import outerringActive from "../assets/outerring_active.svg";
 import useContextMenu from "../hooks/useContextMenu";
 import "../App.css";
 import error1 from "../assets/error5.mp3";
@@ -13,21 +11,17 @@ import * as d3 from "d3";
 import SelectedNode from "./SelectedNode";
 import { Button } from "@chakra-ui/react";
 
-// Colors without dim
-export const isVulnerableByDependencyColor = "#CDC832";
-export const isNotVulnerableLibrary = "#80807F";
-const vulnerabilityColorGrad1 = [180, 2, 6] as [number, number, number];
-const vulnerabilityColorGrad2 = [255, 240, 240] as [number, number, number];
-
-// Colors when dimmed
-const dimmedIsVulnerableByDependencyColor = "#444325";
-const dimmedIsNotVulnerableLibrary = "#353535";
-const dimmedVulnerabilityColorGrad1 = [57, 18, 20] as [number, number, number];
-const dimmedVulnerabilityColorGrad2 = [145, 137, 145] as [
-  number,
-  number,
-  number
-];
+import {
+  isVulnerableByDependencyColor,
+  isNotVulnerableLibrary,
+  dimmedIsNotVulnerableLibrary,
+  dimmedIsVulnerableByDependencyColor,
+  dimmedVulnerabilityColorGrad1,
+  dimmedVulnerabilityColorGrad2,
+  vulnerabilityColorGrad1,
+  vulnerabilityColorGrad2,
+  graidentColor,
+} from "../utils/color";
 
 const rectWidth = 4;
 
@@ -53,31 +47,6 @@ const checkIfVulnerableByDependency = (node: any, sbom_data: any) => {
   }
   // dependencies.find((c) => c.ref === node.name);
 };
-
-// Gradient function that aaccepts two color and a value between 0 and 1
-function graidentColor(
-  color1: [number, number, number],
-  color2: [number, number, number],
-  weight: number
-): string {
-  const w1 = weight;
-  const w2 = 1 - w1;
-  const rgb = [
-    Math.round(color1[0] * w1 + color2[0] * w2),
-    Math.round(color1[1] * w1 + color2[1] * w2),
-    Math.round(color1[2] * w1 + color2[2] * w2),
-  ];
-  return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
-}
-
-function componentToHex(c: number): string {
-  const hex = c.toString(16);
-  return hex.length == 1 ? "0" + hex : hex;
-}
-
-function rgbToHex(r: number, g: number, b: number): string {
-  return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
 
 const D3Remastered = (props: {
   setIsHelpMenuOpen: any;
@@ -330,29 +299,7 @@ const D3Remastered = (props: {
           .forceLink(links)
           .id((d: any) => d.name)
           .distance(100)
-          .strength(0.5) // Make the blue links longer
-        // .strength((link: any) => {
-        //   const areTheSameTypes =
-        //     (link.source.vulnerabilityInfo &&
-        //       link.target.vulnerabilityInfo) ||
-        //     (!link.source.vulnerabilityInfo &&
-        //       !link.target.vulnerabilityInfo) ||
-        //     (link.source.isVulnerableByDependency &&
-        //       link.target.isVulnerableByDependency);
-        //   const areVulnerableAndDependency =
-        //     (link.source.vulnerabilityInfo &&
-        //       link.target.isVulnerableByDependency) ||
-        //     (link.source.isVulnerableByDependency &&
-        //       link.target.vulnerabilityInfo);
-
-        //   if (areTheSameTypes) {
-        //     return 2;
-        //   } else if (areVulnerableAndDependency) {
-        //     return 1;
-        //   } else {
-        //     return 0;
-        //   }
-        // })
+          .strength(0.5)
       );
 
     const link: any = svg
@@ -365,7 +312,6 @@ const D3Remastered = (props: {
       .attr("refY", 6)
       .attr("stroke-width", 1)
       .attr("class", "flowDashedLine");
-    // .attr("filter", "drop-shadow(0px 0px 20px rgb(0 230 230))");
 
     const squareSize = 2;
     const innerringImageSize = 2;
@@ -509,51 +455,6 @@ const D3Remastered = (props: {
         numberOfLayers.current = d.numberOfLayers;
       });
 
-    // const inneringImageFocused = svg
-    //   .selectAll("imageInnerringFocused")
-    //   .data(nodes)
-    //   .enter()
-    //   .append("image")
-    //   .attr("xlink:href", innerringFocused)
-    //   .attr("width", (d: any) => (d.ingoingSize + innerringImageSize) * 2.5)
-    //   .attr("height", (d: any) => (d.ingoingSize + innerringImageSize) * 2.5)
-    //   .attr("visibility", "hidden")
-    //   .attr("pointer-events", "none")
-    //   .attr("user-select", "none")
-    //   .attr("class", "svgInnerring")
-    //   .style("color", "red");
-
-    // const outerringImageFocused = svg
-    //   .selectAll("imageOuterringFocused")
-    //   .data(nodes)
-    //   .enter()
-    //   .append("image")
-    //   .attr("xlink:href", outerringFocused)
-    //   .attr("width", (d: any) => (d.ingoingSize + outerringImageSize) * 4)
-    //   .attr("height", (d: any) => (d.ingoingSize + outerringImageSize) * 4)
-    //   .attr("visibility", "hidden")
-    //   .attr("pointer-events", "none")
-    //   .attr("user-select", "none")
-    //   .attr("class", "svgOuterring");
-
-    // const text = svg
-    //   .append("g")
-    //   .attr("class", "labels")
-    //   .selectAll("text")
-    //   .data(nodes)
-    //   .enter()
-    //   .append("text")
-    //   .attr("text-anchor", "middle")
-    //   .text((d: any) => d.info.name)
-    //   .attr("fill", "white")
-    //   .attr("user-select", "none")
-    //   .attr("pointer-events", "none")
-    //   .attr("sroke-width", "22")
-    //   .attr("stroke", "black")
-    //   .attr("paint-order", "stroke")
-    //   .attr("filter", "drop-shadow(0px 0px 20px rgb(0 230 230))")
-    //   .attr("font-size", 0);
-
     const line: any = svg
       .append("g")
       .selectAll("line")
@@ -580,11 +481,6 @@ const D3Remastered = (props: {
         .attr("y2", (d: any) => d.y + d.ingoingSize * -3);
 
       node.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
-      // text.attr(
-      //   "transform",
-      //   (d: any) =>
-      //     `translate(${d.x + d.ingoingSize * 3},${d.y + d.ingoingSize * -3})`
-      // );
     }
     setTimeout(() => {
       setIsLoading(false);

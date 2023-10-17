@@ -5,7 +5,6 @@ import { Box, Button, ChakraProvider, Input } from "@chakra-ui/react";
 import sbom_data from "./assets/sbom5.json";
 
 function App() {
-  const [tabs, setTabs] = useState(3);
   const [isHelpMenuOpen, setIsHelpMenuOpen] = useState(false);
   const [isSBOMLoaded, setIsSBOMLoaded] = useState(false);
   const [SBOMData, setSBOMData] = useState<any>(null);
