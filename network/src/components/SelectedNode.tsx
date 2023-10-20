@@ -16,11 +16,18 @@ const SelectedNode = (props: { nodeInfo: any; selectedLinks: any }) => {
     }
     for (let i = 0; i < props.selectedLinks.length; i++) {
       const source = props.selectedLinks[i].source;
+      if (!source) return;
       const target = props.selectedLinks[i].target;
       const x1 = randomNumberGenerator(20, 200);
       const y1 = randomNumberGenerator(20, 200);
+
       const selectedNodeName = props.nodeInfo.name;
-      if (elements.find((e: any) => e.data.id === source.name) === undefined) {
+
+      if (
+        elements.find((e: any) => {
+          return e.data.id === source.name;
+        }) === undefined
+      ) {
         tmpElements.push({
           data: { id: source.name, label: source.info.name },
           position: { x: x1, y: y1 },

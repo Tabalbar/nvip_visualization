@@ -71,7 +71,6 @@ const SideMenu = (props: { nodeInfo: any }) => {
     vx: 0.008821683951676023,
   };
   useEffect(() => {
-    console.log(props.nodeInfo);
     if (props.nodeInfo && props.nodeInfo.vulnerabilityInfo) {
       const attackVector = props.nodeInfo.vulnerabilityInfo.ratings[0].vector;
 
@@ -264,22 +263,24 @@ const SideMenu = (props: { nodeInfo: any }) => {
                   {selectedNode.vulnerabilityInfo.ratings ? (
                     <>
                       <table>
-                        <tr>
-                          <th>Method</th>
-                          <th>Rating</th>
-                          <th>Severity</th>
-                        </tr>
-                        {selectedNode.vulnerabilityInfo.ratings.map(
-                          (rating: any, index: number) => {
-                            return (
-                              <tr key={index}>
-                                <td>{rating.method}</td>
-                                <td>{rating.score}</td>
-                                <td>{rating.severity}</td>
-                              </tr>
-                            );
-                          }
-                        )}
+                        <tbody>
+                          <tr>
+                            <th>Method</th>
+                            <th>Rating</th>
+                            <th>Severity</th>
+                          </tr>
+                          {selectedNode.vulnerabilityInfo.ratings.map(
+                            (rating: any, index: number) => {
+                              return (
+                                <tr key={index}>
+                                  <td>{rating.method}</td>
+                                  <td>{rating.score}</td>
+                                  <td>{rating.severity}</td>
+                                </tr>
+                              );
+                            }
+                          )}
+                        </tbody>
                       </table>
                     </>
                   ) : null}
@@ -289,56 +290,63 @@ const SideMenu = (props: { nodeInfo: any }) => {
                   {selectedNode.vulnerabilityInfo.ratings ? (
                     <>
                       <table>
-                        <tr>
-                          {vulnerabilityAttackVector
-                            ? Object.keys(vulnerabilityAttackVector).map(
-                                (key, index) => {
-                                  return (
-                                    <Tooltip
-                                      label={retrieveDescription(
-                                        key,
-                                        selectedNode.vulnerabilityInfo
-                                          .ratings[0].method
-                                      )}
-                                      placement={"top"}
-                                    >
-                                      <th
-                                        style={{
-                                          backgroundColor: "black",
-                                          // position: "absolute",
-                                        }}
+                        <tbody>
+                          <tr>
+                            {vulnerabilityAttackVector
+                              ? Object.keys(vulnerabilityAttackVector).map(
+                                  (key, index) => {
+                                    return (
+                                      <Tooltip
+                                        label={retrieveDescription(
+                                          key,
+                                          selectedNode.vulnerabilityInfo
+                                            .ratings[0].method
+                                        )}
+                                        key={index}
+                                        placement={"top"}
+                                      >
+                                        <th
+                                          style={{
+                                            backgroundColor: "black",
+                                            // position: "absolute",
+                                          }}
+                                          key={index}
+                                        >
+                                          {key}
+                                        </th>
+                                      </Tooltip>
+                                    );
+                                  }
+                                )
+                              : null}
+                          </tr>
+
+                          <tr>
+                            {vulnerabilityAttackVector
+                              ? Object.keys(vulnerabilityAttackVector).map(
+                                  (key, index) => {
+                                    return (
+                                      <Tooltip
+                                        label={retrieveMetricValueDescription(
+                                          vulnerabilityAttackVector[key],
+                                          selectedNode.vulnerabilityInfo
+                                            .ratings[0].method
+                                        )}
                                         key={index}
                                       >
-                                        {key}
-                                      </th>
-                                    </Tooltip>
-                                  );
-                                }
-                              )
-                            : null}
-                        </tr>
-
-                        <tr>
-                          {vulnerabilityAttackVector
-                            ? Object.keys(vulnerabilityAttackVector).map(
-                                (key, index) => {
-                                  return (
-                                    <Tooltip
-                                      label={retrieveMetricValueDescription(
-                                        vulnerabilityAttackVector[key],
-                                        selectedNode.vulnerabilityInfo
-                                          .ratings[0].method
-                                      )}
-                                    >
-                                      <td style={{ width: "50px" }} key={index}>
-                                        {vulnerabilityAttackVector[key]}
-                                      </td>
-                                    </Tooltip>
-                                  );
-                                }
-                              )
-                            : null}
-                        </tr>
+                                        <td
+                                          style={{ width: "50px" }}
+                                          key={index}
+                                        >
+                                          {vulnerabilityAttackVector[key]}
+                                        </td>
+                                      </Tooltip>
+                                    );
+                                  }
+                                )
+                              : null}
+                          </tr>
+                        </tbody>
                       </table>
                     </>
                   ) : null}

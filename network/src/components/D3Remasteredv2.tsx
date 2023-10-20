@@ -22,6 +22,8 @@ import {
   vulnerabilityColorGrad2,
   graidentColor,
 } from "../utils/color";
+import { SBOMDataProps, Vulnerability } from "../utils/types";
+import { SBOM } from "../utils/SBOM";
 
 const rectWidth = 4;
 
@@ -35,7 +37,7 @@ const checkIfVulnerableByDependency = (node: any, sbom_data: any) => {
     const node = dependenciesToSearch.shift();
 
     if (
-      sbom_data.vulnerabilities.find((vuln) =>
+      sbom_data.vulnerabilities.find((vuln: Vulnerability) =>
         vuln.affects.find((affect) => affect["ref"] === node)
       )
     ) {
@@ -96,11 +98,10 @@ const D3Remastered = (props: {
   useEffect(() => {
     const tmpNodes: any = [];
     const tmpLinks: any = [];
-    console.log(props.sbom_data);
-    const components = props.sbom_data.components;
-    const vulnerabilities = props.sbom_data.vulnerabilities;
-    const dependencies = props.sbom_data.dependencies;
-    console.log(dependencies);
+    const SBOMData: SBOMDataProps = new SBOM(props.sbom_data);
+    const components = SBOMData.components;
+    const vulnerabilities = SBOMData.vulnerabilities;
+    const dependencies = SBOMData.dependencies;
     let color = "";
     let dimmedColor = "";
 
@@ -108,34 +109,18 @@ const D3Remastered = (props: {
     let ingoingLinks = 0;
 
     // Trying to normalize the vulnerability score
-    let vulScores = vulnerabilities.map((vuln) => {
-      // @ts-ignore
-      return vuln.ratings[0].score;
-    });
-    vulScores = vulScores.filter((vuln) => vuln !== undefined);
+    const vulScores = SBOMData.getVulnerabilityScores();
     const minVulScore = Math.min(...vulScores);
     const maxVulScore = Math.max(...vulScores);
+
     for (let i = 0; i < components.length; i++) {
       let outgoingSize = 2;
       let outgoingLinks = 0;
 
       const component = components[i];
 
-      // If the library is a vulnerability, grab the vulnerability info
-      // Else is undefined
-      const vulnerabilityInfo: any = vulnerabilities.find((vuln) =>
-        vuln.affects.find(
-          (affect) => affect["ref"] === props.sbom_data.components[i]["bom-ref"]
-        )
-      );
-      if (vulnerabilityInfo) {
-        const ratings = vulnerabilityInfo.ratings;
-        for (let i = 0; i < ratings.length; i++) {
-          if (isNaN(ratings[i].score)) {
-            ratings[i].score = 10;
-          }
-        }
-      }
+      const vulnerabilityInfo: Vulnerability | undefined =
+        SBOMData.getVulnerability(component["bom-ref"]);
 
       const isVulnerableByDependency = checkIfVulnerableByDependency(
         component,
@@ -173,13 +158,11 @@ const D3Remastered = (props: {
         color = graidentColor(
           vulnerabilityColorGrad1,
           vulnerabilityColorGrad2,
-          // @ts-ignore
           normalizedSeverityScore
         );
         dimmedColor = graidentColor(
           dimmedVulnerabilityColorGrad1,
           dimmedVulnerabilityColorGrad2,
-          // @ts-ignore
           normalizedSeverityScore
         );
       } else if (isVulnerableByDependency) {
@@ -469,18 +452,20 @@ const D3Remastered = (props: {
 
     function ticked() {
       link
-        .attr("x1", (d: any) => d.source.x)
-        .attr("y1", (d: any) => d.source.y)
-        .attr("x2", (d: any) => d.target.x)
-        .attr("y2", (d: any) => d.target.y);
+        .attr("x1", (d: any) => (isNaN(d.source.x) ? 0 : d.source.x))
+        .attr("y1", (d: any) => (isNaN(d.source.y) ? 0 : d.source.y))
+        .attr("x2", (d: any) => (isNaN(d.target.x) ? 0 : d.target.x))
+        .attr("y2", (d: any) => (isNaN(d.target.y) ? 0 : d.target.y));
 
       line
-        .attr("x1", (d: any) => d.x)
-        .attr("y1", (d: any) => d.y)
-        .attr("x2", (d: any) => d.x + d.ingoingSize * 3)
-        .attr("y2", (d: any) => d.y + d.ingoingSize * -3);
+        .attr("x1", (d: any) => (isNaN(d.x) ? 0 : d.x))
+        .attr("y1", (d: any) => (isNaN(d.y) ? 0 : d.y))
+        .attr("x2", (d: any) => (isNaN(d.x) ? 0 : d.x + d.ingoingSize * 3))
+        .attr("y2", (d: any) => (isNaN(d.y) ? 0 : d.y + d.ingoingSize * -3));
 
-      node.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
+      node.attr("transform", (d: any) =>
+        isNaN(d.x) && isNaN(d.y) ? null : `translate(${d.x},${d.y})`
+      );
     }
     setTimeout(() => {
       setIsLoading(false);
@@ -498,6 +483,7 @@ const D3Remastered = (props: {
       }
     }
     focusedNode.current.numberOfLayers++;
+
     const links = findAssociatedLinks(focusedNode.current);
     if (JSON.stringify(links) === JSON.stringify(linksToDelete)) {
       focusedNode.current.numberOfLayers--;
