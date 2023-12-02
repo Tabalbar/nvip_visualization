@@ -1,0 +1,79 @@
+{
+  "name": "jupyter-tablewidgets",
+  "version": "0.3.1",
+  "description": "A set of widgets to help facilitate reuse of large tables across widgets",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/progressivis/ipytablewidgets.git"
+  },
+  "author": "Jean-Daniel Fekete, Christian Poli",
+  "license": "BSD-3-Clause",
+  "main": "lib/index",
+  "bugs": {
+    "url": "https://github.com/progressivis/ipytablewidgets/issues"
+  },
+  "homepage": "https://github.com/progressivis/ipytablewidgets/#readme",
+  "scripts": {
+    "format": "prettier --write 'src/*.ts'",
+    "lint": "prettier --check 'src/*.ts'",
+    "build": "jlpm run build:lib && webpack --mode production && jlpm run build:labx",
+    "build:nb": "webpack --mode production",
+    "build:labx": "jupyter labextension build .",
+    "build:lib": "tsc",
+    "test": "npm run test:firefox",
+    "test:ci": "karma start --browsers=ChromeCI karma.conf.js",
+    "test:chrome": "karma start --browsers=Chrome karma.conf.js",
+    "test:debug": "karma start --browsers=Chrome --singleRun=false --debug=true karma.conf.js",
+    "test:firefox": "karma start --browsers=Firefox karma.conf.js",
+    "watch": "webpack --mode development --watch"
+  },
+  "dependencies": {
+    "@jupyter-widgets/base": "^2 || ^3 || ^4 || ^5 || ^6",
+    "lz4js": "^0.2.0",
+    "ndarray": "^1.0.19",
+    "ndarray-unpack": "^1.0.0",
+    "pako": "^2.0.3"
+  },
+  "devDependencies": {
+    "@jupyterlab/builder": "^3.1.11",
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
+    "@types/ndarray": "^1.0.9",
+    "@types/pako": "^1.0.1",
+    "@types/webpack-env": "*",
+    "chai": "^4.3.4",
+    "karma": "^6.3.4",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage": "^2.0.3",
+    "karma-firefox-launcher": "^2.1.1",
+    "karma-mocha": "^2.0.1",
+    "karma-mocha-reporter": "^2.2.5",
+    "karma-typescript": "^5.5.1",
+    "karma-typescript-es6-transform": "^5.5.1",
+    "mocha": "^9.0.2",
+    "prettier": "^2.3.0",
+    "ts-loader": "^9.2.2",
+    "typescript": "^4.5.5",
+    "webpack": "^5.68.0",
+    "webpack-cli": "^4.9.2"
+  },
+  "files": [
+    "lib/",
+    "dist/"
+  ],
+  "jupyterlab": {
+    "extension": "lib/labplugin",
+    "outputDir": "../ipytablewidgets/labextension",
+    "sharedPackages": {
+      "@jupyter-widgets/base": {
+        "bundled": false,
+        "singleton": true
+      }
+    },
+    "_build": {
+      "load": "static/remoteEntry.830facb2b8d2798f80f1.js",
+      "extension": "./extension"
+    }
+  }
+}

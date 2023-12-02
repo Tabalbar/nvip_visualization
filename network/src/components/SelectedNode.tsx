@@ -18,6 +18,9 @@ const SelectedNode = (props: { nodeInfo: any; selectedLinks: any }) => {
       const source = props.selectedLinks[i].source;
       if (!source) return;
       const target = props.selectedLinks[i].target;
+      if (!target) return;
+
+      console.log(source, target);
       const x1 = randomNumberGenerator(20, 200);
       const y1 = randomNumberGenerator(20, 200);
 
@@ -43,13 +46,19 @@ const SelectedNode = (props: { nodeInfo: any; selectedLinks: any }) => {
           selected: selectedNodeName === target.name,
         });
       }
-      tmpElements.push({
-        data: {
-          source: source.name,
-          target: target.name,
-          label: props.selectedLinks[i].label,
-        },
-      });
+      for (let i = 0; i < props.selectedLinks.length; i++) {
+        const source = props.selectedLinks[i].source;
+        if (!source) return;
+        const target = props.selectedLinks[i].target;
+        if (!target) return;
+        tmpElements.push({
+          data: {
+            source: source.name,
+            target: target.name,
+            label: props.selectedLinks[i].label,
+          },
+        });
+      }
     }
     setElements(tmpElements);
   }, [props.selectedLinks]);

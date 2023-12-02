@@ -250,14 +250,14 @@ const D3Remastered = (props: {
     simulation.current = d3
       .forceSimulation(nodes)
       .force(
-        "charge",
+        "r",
         d3
           .forceCollide()
           .radius((d: any) => d.ingoingSize + 2)
           .iterations(1)
       )
       .force(
-        "r",
+        "center",
         d3
           .forceRadial(
             (d: any) =>
@@ -275,6 +275,10 @@ const D3Remastered = (props: {
           )
           .strength(3.5)
       )
+      // .force("center", d3.forceCenter())
+      .force("charge", d3.forceManyBody().strength(-200))
+      // .force("charge2", d3.forceManyBody())
+      // .force("charge3", d3.forceManyBody())
       .on("tick", ticked)
       .force(
         "link",

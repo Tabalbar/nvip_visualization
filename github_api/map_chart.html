@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #vis.vega-embed {
+        width: 100%;
+        display: flex;
+      }
+
+      #vis.vega-embed details,
+      #vis.vega-embed details summary {
+        position: relative;
+      }
+    </style>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/vega@5"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/vega-lite@5.15.1"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/vega-embed@6"
+    ></script>
+  </head>
+  <body>
+    <div id="vis"></div>
+    <script>
+      (function (vegaEmbed) {
+        var spec = {
+          $schema: "https://vega.github.io/schema/vega-lite/v5.15.1.json",
+          description: "A map of user locations.",
+          width: 800,
+          height: 800,
+          datasets: {
+            "data-4c474b1350a7ddca71e47e4538fb9d1e": [
+              {
+                username: "markt-asf",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "rmaucher",
+                count: 0,
+                location: "France",
+                latitude: 46.603354,
+                longitude: 1.888334,
+              },
+              {
+                username: "olamy",
+                count: 0,
+                location: "Brisbane, Australia",
+                latitude: -27.4698,
+                longitude: 153.0251,
+              },
+              {
+                username: "rainerjung",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "FSchumacher",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "garethjevans",
+                count: 0,
+                location: "Annalong",
+                latitude: 54.1542,
+                longitude: -5.9376,
+              },
+              {
+                username: "cklein05",
+                count: 0,
+                location: "Filderstadt, Germany",
+                latitude: 48.6408,
+                longitude: 9.2187,
+              },
+              {
+                username: "mturk",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "ChrissW-R1",
+                count: 0,
+                location: "Germany",
+                latitude: 51.1657,
+                longitude: 10.4515,
+              },
+              {
+                username: "michael-o",
+                count: 0,
+                location: "Berlin, Germany",
+                latitude: 52.52,
+                longitude: 13.405,
+              },
+              {
+                username: "mjgp2",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "jfclere",
+                count: 0,
+                location: "Neuchatel",
+                latitude: 46.9951,
+                longitude: 6.9385,
+              },
+              {
+                username: "jgneff",
+                count: 0,
+                location: "Vancouver BC, Canada",
+                latitude: 49.2827,
+                longitude: -123.1207,
+              },
+              {
+                username: "tbw777",
+                count: 0,
+                location: "Brazil",
+                latitude: -14.235,
+                longitude: -51.9253,
+              },
+              {
+                username: "leggiero",
+                count: 0,
+                location: "London, UK",
+                latitude: 51.5072,
+                longitude: -0.1276,
+              },
+              {
+                username: "johnkdev",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "pachulisk",
+                count: 0,
+                location: "Beijing, China",
+                latitude: 39.9042,
+                longitude: 116.4074,
+              },
+              {
+                username: "nicholasgribanov",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "xxeol2",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "reftel",
+                count: 0,
+                location: "Grimstad",
+                latitude: 58.3244,
+                longitude: 8.6122,
+              },
+              {
+                username: "jiangtao69039",
+                count: 0,
+                location: "Hangzhou China",
+                latitude: 30.2732,
+                longitude: 120.1551,
+              },
+              {
+                username: "eirbjo",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "violetagg",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "cipherboy",
+                count: 0,
+                location: "Ann Arbor, MI",
+                latitude: 42.2808,
+                longitude: -83.743,
+              },
+              {
+                username: "tandraschko",
+                count: 0,
+                location: "Bavaria",
+                latitude: 48.7904,
+                longitude: 11.4979,
+              },
+              {
+                username: "tochigiv",
+                count: 0,
+                location: "North Carolina",
+                latitude: 35.7822,
+                longitude: -80.7935,
+              },
+              {
+                username: "greeng00se",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "stiemannkj1",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "jimjag",
+                count: 0,
+                location: "Sol 3",
+                latitude: 10.0598,
+                longitude: 2.3154,
+              },
+              {
+                username: "lanicc",
+                count: 0,
+                location: "HangZhou",
+                latitude: 30.2741,
+                longitude: 120.1551,
+              },
+              {
+                username: "bohmber",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "ml86",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "efge",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "rpluem-vf",
+                count: 0,
+                location: "Germany",
+                latitude: 51.1657,
+                longitude: 10.4515,
+              },
+              {
+                username: "xordspar0",
+                count: 0,
+                location: "Minnesota",
+                latitude: 45.7326,
+                longitude: -93.9196,
+              },
+              {
+                username: "vocatan",
+                count: 0,
+                location: "Virginia",
+                latitude: 37.4316,
+                longitude: -78.6569,
+              },
+              {
+                username: "dmitri-blinov",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "malaysf",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "ijliym",
+                count: 0,
+                location: "Beijing, China.",
+                latitude: 39.9042,
+                longitude: 116.4074,
+              },
+              {
+                username: "dachuan9e",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "kumarvikas2020",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "biya-bi",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "prankkelkar",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "minfrin",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "olafk",
+                count: 0,
+                location: "Hamburg/Germany",
+                latitude: 53.5511,
+                longitude: 9.9937,
+              },
+              {
+                username: "ThStock",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "rjozwik",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "Holomark",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "marcorobiati",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "dextro67",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "maxime-beck",
+                count: 0,
+                location: "La Chaux-de-Fonds",
+                latitude: 47.1001,
+                longitude: 6.8279,
+              },
+              {
+                username: "ingpyo",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "govi20",
+                count: 0,
+                location: "India",
+                latitude: 20.5937,
+                longitude: 78.9629,
+              },
+              {
+                username: "zzk0",
+                count: 0,
+                location: "GuangZhou",
+                latitude: 23.1291,
+                longitude: 113.2644,
+              },
+              {
+                username: "sdeleuze",
+                count: 0,
+                location: "Lyon",
+                latitude: 45.75,
+                longitude: 4.85,
+              },
+              {
+                username: "rmannibucau",
+                count: 0,
+                location: "France",
+                latitude: 46.603354,
+                longitude: 1.888334,
+              },
+              {
+                username: "crisgeek",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "peteruhnak",
+                count: 0,
+                location: "Antwerp, Belgium",
+                latitude: 51.2194,
+                longitude: 4.4025,
+              },
+              {
+                username: "stokito",
+                count: 0,
+                location: "Krivoy Rog, Ukraine",
+                latitude: 48.0315,
+                longitude: 33.209,
+              },
+              {
+                username: "ppkarwasz",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "tomchiverton",
+                count: 0,
+                location: "UK",
+                latitude: 51.5099,
+                longitude: -0.118,
+              },
+              {
+                username: "ebourg",
+                count: 0,
+                location: "Paris",
+                latitude: 48.8566,
+                longitude: 2.3522,
+              },
+              {
+                username: "shirayuki",
+                count: 0,
+                location: "Japan",
+                latitude: 36.2048,
+                longitude: 138.2529,
+              },
+              {
+                username: "alexkachanov",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "huiwan",
+                count: 0,
+                location: "Beijing",
+                latitude: 39.9042,
+                longitude: 116.4074,
+              },
+              {
+                username: "songyouyu",
+                count: 0,
+                location: "Shenzhen,Guangdong",
+                latitude: 22.5431,
+                longitude: 114.0579,
+              },
+              {
+                username: "thomasmey",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "mseele",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "hdeadman",
+                count: 0,
+                location: "Fairfax, Virginia",
+                latitude: 38.8462,
+                longitude: -77.3064,
+              },
+              {
+                username: "chenggwang",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "Dmole",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "euske",
+                count: 0,
+                location: "Nagano, Japan",
+                latitude: 36.2048,
+                longitude: 138.2529,
+              },
+              {
+                username: "gohilmca",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "reliveyy",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "dependabot[bot]",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "javierlete",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "bekionel",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "dblevins",
+                count: 0,
+                location: "Santa Monica, CA",
+                latitude: 34.0219,
+                longitude: -118.4814,
+              },
+              {
+                username: "iamjooon2",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "rhernandez35",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "Jaeyoung22",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "parkmuhyeun",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "chaitan64arun",
+                count: 0,
+                location: "India",
+                latitude: 20.5937,
+                longitude: 78.9629,
+              },
+              {
+                username: "isapir",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+              {
+                username: "rotty3000",
+                count: 0,
+                location: "Ontario, Canada",
+                latitude: 51.2538,
+                longitude: -85.3232,
+              },
+              {
+                username: "csutherl",
+                count: 0,
+                location: "North Carolina, USA",
+                latitude: 35.7822,
+                longitude: -80.7935,
+              },
+              {
+                username: "ChristopherSchultz",
+                count: 0,
+                location: "Arlington, VA",
+                latitude: 38.8816,
+                longitude: -77.091,
+              },
+              {
+                username: "KangZhiDong",
+                count: 0,
+                location: "Made in China",
+                latitude: 35.8617,
+                longitude: 104.1954,
+              },
+              {
+                username: "martin-g",
+                count: 0,
+                location: "Veliko Tarnovo, Bulgaria",
+                latitude: 43.0757,
+                longitude: 25.6172,
+              },
+              {
+                username: "aooohan",
+                count: 0,
+                location: "Beijing",
+                latitude: 39.9042,
+                longitude: 116.4074,
+              },
+              {
+                username: "larsgrefer",
+                count: 0,
+                location: "Dortmund, Germany",
+                latitude: 51.5136,
+                longitude: 7.4653,
+              },
+              {
+                username: "carterkozak",
+                count: 0,
+                location: "Raleigh, NC",
+                latitude: 35.7796,
+                longitude: -78.6382,
+              },
+              {
+                username: "sylvainlaurent",
+                count: 0,
+                location: null,
+                latitude: null,
+                longitude: null,
+              },
+            ],
+          },
+
+          layer: [
+            {
+              data: {
+                url: "world-110m.json",
+                format: {
+                  type: "topojson",
+                  feature: "countries",
+                },
+              },
+              mark: {
+                type: "geoshape",
+                fill: "#ddd",
+                stroke: "#fff",
+              },
+            },
+            {
+              data: {
+                name: "data-4c474b1350a7ddca71e47e4538fb9d1e",
+              },
+              mark: {
+                type: "circle",
+                color: "blue",
+                size: 100,
+              },
+              encoding: {
+                longitude: {
+                  field: "longitude",
+                  type: "quantitative",
+                },
+                latitude: {
+                  field: "latitude",
+                  type: "quantitative",
+                },
+                tooltip: [
+                  {
+                    field: "username",
+                    type: "nominal",
+                  },
+                  {
+                    field: "location",
+                    type: "nominal",
+                  },
+                ],
+              },
+            },
+            {
+              data: {
+                name: "data-4c474b1350a7ddca71e47e4538fb9d1e",
+              },
+              mark: "text",
+              encoding: {
+                longitude: {
+                  field: "longitude",
+                  type: "quantitative",
+                },
+                latitude: {
+                  field: "latitude",
+                  type: "quantitative",
+                },
+                //      text: {
+                // field: "location",
+                //    type: "nominal",
+                //        },
+              },
+            },
+          ],
+          projection: {
+            type: "albers",
+          },
+        };
+
+        var embedOpt = { mode: "vega-lite" };
+
+        function showError(el, error) {
+          el.innerHTML =
+            '<div style="color:red;">' +
+            "<p>JavaScript Error: " +
+            error.message +
+            "</p>" +
+            "<p>This usually means there's a typo in your chart specification. " +
+            "See the javascript console for the full traceback.</p>" +
+            "</div>";
+          throw error;
+        }
+        const el = document.getElementById("vis");
+        vegaEmbed("#vis", spec, embedOpt).catch((error) =>
+          showError(el, error)
+        );
+      })(vegaEmbed);
+    </script>
+  </body>
+</html>
